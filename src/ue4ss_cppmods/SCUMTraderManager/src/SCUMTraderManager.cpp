@@ -8974,7 +8974,7 @@ namespace RC::SCUMTraderManager
 
         std::ostringstream ss;
         ss << "{\"ok\":false,"
-           << "\"route\":\"hektor-server-actor-editor\"," 
+           << "\"route\":\"hektor-server-actor-editor\","
            << "\"operation\":\"trace-select\","
            << "\"blocked\":true,"
            << "\"stage\":\"server-target-selection-disabled\","
@@ -9590,7 +9590,7 @@ namespace RC::SCUMTraderManager
                << "\"operation\":\"copy\","
                << "\"stage\":\"resolve-world\","
                << "\"actorFullName\":\"" << json_escape(actor_full_name) << "\","
-               << "\"sourceClass\":\"" << json_escape(safe_full_name(actor_class)) << "\"," 
+               << "\"sourceClass\":\"" << json_escape(safe_full_name(actor_class)) << "\","
                << "\"message\":\"World could not be resolved for copy.\","
                << "\"attempts\":";
             append_json_string_array(ss, attempts);
@@ -9607,8 +9607,8 @@ namespace RC::SCUMTraderManager
                << "\"dryRun\":true,"
                << "\"actorFullName\":\"" << json_escape(actor_full_name) << "\","
                << "\"actorClass\":\"" << json_escape(actor_class_full_name) << "\","
-               << "\"sourceClass\":\"" << json_escape(safe_full_name(actor_class)) << "\"," 
-               << "\"world\":\"" << json_escape(safe_full_name(world)) << "\"," 
+               << "\"sourceClass\":\"" << json_escape(safe_full_name(actor_class)) << "\","
+               << "\"world\":\"" << json_escape(safe_full_name(world)) << "\","
                << "\"sourceLocation\":";
             append_vector_json(ss, before_location);
             ss << ",\"requestedLocation\":";
@@ -9657,8 +9657,8 @@ namespace RC::SCUMTraderManager
                << "\"operation\":\"copy\","
                << "\"stage\":\"spawn-copy\","
                << "\"actorFullName\":\"" << json_escape(actor_full_name) << "\","
-               << "\"sourceClass\":\"" << json_escape(safe_full_name(actor_class)) << "\"," 
-               << "\"world\":\"" << json_escape(safe_full_name(world)) << "\"," 
+               << "\"sourceClass\":\"" << json_escape(safe_full_name(actor_class)) << "\","
+               << "\"world\":\"" << json_escape(safe_full_name(world)) << "\","
                << "\"requestedLocation\":";
             append_vector_json(ss, desired_location);
             ss << ",\"attempts\":";
@@ -9692,11 +9692,11 @@ namespace RC::SCUMTraderManager
            << "\"selectionMethod\":\"server-pointer-exact-or-strict-client-identity\","
            << "\"sourceActorFullName\":\"" << json_escape(actor_full_name) << "\","
            << "\"sourceActorClass\":\"" << json_escape(actor_class_full_name) << "\","
-           << "\"sourceClass\":\"" << json_escape(safe_full_name(actor_class)) << "\"," 
-           << "\"spawnedActorFullName\":\"" << json_escape(safe_full_name(spawned_object)) << "\"," 
+           << "\"sourceClass\":\"" << json_escape(safe_full_name(actor_class)) << "\","
+           << "\"spawnedActorFullName\":\"" << json_escape(safe_full_name(spawned_object)) << "\","
            << "\"spawnedActorClass\":\"" << json_escape(object_class_full_name_noexcept(spawned_object)) << "\","
-           << "\"spawnedClassLeaf\":\"" << json_escape(object_leaf_from_full_name(safe_full_name(actor_class))) << "\"," 
-           << "\"world\":\"" << json_escape(safe_full_name(world)) << "\"," 
+           << "\"spawnedClassLeaf\":\"" << json_escape(object_leaf_from_full_name(safe_full_name(actor_class))) << "\","
+           << "\"world\":\"" << json_escape(safe_full_name(world)) << "\","
            << "\"placementApplied\":" << (placement_applied ? "true" : "false") << ","
            << "\"locationOk\":" << (actual_location_ok ? "true" : "false") << ","
            << "\"rotationOk\":" << (actual_rotation_ok ? "true" : "false") << ","
@@ -10291,10 +10291,10 @@ namespace RC::SCUMTraderManager
             const auto trade_post_location = trade_post_actor->K2_GetActorLocation();
             const auto trade_post_rotation = trade_post_actor->K2_GetActorRotation();
             if (index > 0) ss << ",";
-            ss << "{\"fullName\":\"" << json_escape(full_name(trade_post)) << "\"," 
-               << "\"assignedManager\":\"" << json_escape(full_name(assigned_manager)) << "\"," 
-               << "\"assignedManagerRoute\":\"" << json_escape(manager_route) << "\"," 
-               << "\"assignedToManager\":" << (assigned_manager != nullptr ? "true" : "false") << "," 
+            ss << "{\"fullName\":\"" << json_escape(full_name(trade_post)) << "\","
+               << "\"assignedManager\":\"" << json_escape(full_name(assigned_manager)) << "\","
+               << "\"assignedManagerRoute\":\"" << json_escape(manager_route) << "\","
+               << "\"assignedToManager\":" << (assigned_manager != nullptr ? "true" : "false") << ","
                << "\"actorLocation\":";
             append_vector_json(ss, trade_post_location);
             ss << ",\"actorRotation\":";
@@ -13967,7 +13967,7 @@ namespace RC::SCUMTraderManager
             (!economy_prepare.requested || economy_prepare.ok);
 
         std::ostringstream ss;
-        ss << "{\"actorClass\":\"" << json_escape(actor_class) << "\"," 
+        ss << "{\"actorClass\":\"" << json_escape(actor_class) << "\","
            << "\"ok\":" << (ok ? "true" : "false") << ","
            << "\"stage\":\"link-existing-summoned-trader\","
            << "\"route\":\"armory-summon-existing-link\","
@@ -14156,13 +14156,13 @@ namespace RC::SCUMTraderManager
         }
 
         std::ostringstream ss;
-        ss << "{\"probe\":\"armory-deep-gobjects\"," 
-           << "\"version\":\"" << mod_version << "\"," 
-           << "\"warning\":\"read-only GUObjectArray name/class scan; no actor spawn, no TradeBuy dispatch, no UObject mutation\"," 
-           << "\"gobjects\":\"" << json_escape(hex_address(gobjects)) << "\"," 
-           << "\"objectArrayOffset\":\"" << json_escape(hex_address(used_offset)) << "\"," 
-           << "\"error\":\"" << json_escape(error) << "\"," 
-           << "\"limits\":{\"maxObjects\":" << max_objects << ",\"maxSamples\":" << max_samples << "}," 
+        ss << "{\"probe\":\"armory-deep-gobjects\","
+           << "\"version\":\"" << mod_version << "\","
+           << "\"warning\":\"read-only GUObjectArray name/class scan; no actor spawn, no TradeBuy dispatch, no UObject mutation\","
+           << "\"gobjects\":\"" << json_escape(hex_address(gobjects)) << "\","
+           << "\"objectArrayOffset\":\"" << json_escape(hex_address(used_offset)) << "\","
+           << "\"error\":\"" << json_escape(error) << "\","
+           << "\"limits\":{\"maxObjects\":" << max_objects << ",\"maxSamples\":" << max_samples << "},"
            << "\"stats\":{\"numElements\":" << object_array.num_elements
            << ",\"numChunks\":" << object_array.num_chunks
            << ",\"inspected\":" << inspected
@@ -16312,7 +16312,7 @@ namespace RC::SCUMTraderManager
             spawned_actor->SetActorHiddenInGame(true);
             spawned_actor->SetActorEnableCollision(false);
             std::ostringstream ss;
-            ss << "{\"actorClass\":\"" << json_escape(actor_class) << "\"," 
+            ss << "{\"actorClass\":\"" << json_escape(actor_class) << "\","
                << "\"ok\":false,"
                << "\"stage\":\"spawn-tradepost-location-proof\","
                << "\"route\":\"clone-existing-registered-tradepost-native-site\","
