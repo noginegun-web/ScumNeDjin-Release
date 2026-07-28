@@ -33,6 +33,8 @@ jobs:
         shell: pwsh
         run: ./scripts/Test-PublicTree.ps1
       - name: Configure native bridge
-        run: cmake -S src/native -B build/native -G "Visual Studio 17 2022" -A x64 -DSCUM_NEDJIN_PUBLIC_REQUIRE_CONFIGURED_API_KEY=ON
+        run: cmake -S src/native -B build/native -G "Visual Studio 17 2022" -A x64 -DSCUM_NEDJIN_PUBLIC_REQUIRE_CONFIGURED_API_KEY=ON -DSCUM_NEDJIN_BUILD_TESTS=ON
       - name: Build native bridge
         run: cmake --build build/native --config Release
+      - name: Run native safety tests
+        run: ctest --test-dir build/native -C Release --output-on-failure
