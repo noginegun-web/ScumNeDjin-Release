@@ -17,7 +17,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base="$(git merge-base "origin/$GITHUB_BASE_REF" HEAD)"
+          # pull_request workflows check out a generated merge commit. Check
+          # the contributor's real head SHA instead, otherwise the synthetic
+          # merge commit itself can never carry a DCO sign-off.
+          head="${{ github.event.pull_request.head.sha }}"
+          base="$(git merge-base "origin/$GITHUB_BASE_REF" "$head")"
           while read -r commit; do
             git show -s --format=%B "$commit" | grep -qi '^Signed-off-by: '
-          done < <(git rev-list "$base..HEAD")
+          done < <(git rev-list "$base..$head")
