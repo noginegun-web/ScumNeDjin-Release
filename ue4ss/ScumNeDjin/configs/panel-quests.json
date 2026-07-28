@@ -1,0 +1,26 @@
+{
+  "Name": "Квесты сервера",
+  "Description": "Панельная квестовая доска. Безопасный режим выдаёт награду по /quest claim и не удаляет предметы из инвентаря без доказанного парсера.",
+  "Enabled": false,
+  "RequiredPermission": "",
+  "ClaimCooldownHours": 24,
+  "AnnounceOnClaim": true,
+  "ListMessage": "Активные квесты: {quests}",
+  "Quests": [
+    {
+      "Enabled": true,
+      "Alias": "north",
+      "Title": "Северный заказ",
+      "Mode": "Claim",
+      "Description": "Тестовый ежедневный квест панели.",
+      "TargetItemId": "",
+      "TargetCount": 0,
+      "RewardMoney": 5000,
+      "RewardGold": 0,
+      "RewardFame": 0,
+      "RewardItemsText": "Apple_2|2",
+      "SuccessMessage": "Квест выполнен: {title}.",
+      "Announcement": "[Квест] {player} получил награду за {title}."
+    }
+  ]
+}

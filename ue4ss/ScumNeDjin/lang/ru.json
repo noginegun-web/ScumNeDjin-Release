@@ -1,0 +1,9 @@
+{
+  "helpPrefix": "Команды",
+  "helpLanguageHint": "Язык ответов: русский. Сменить язык: /lang en или /lang ru.",
+  "hello": "Привет, {name}. Система сервера работает.",
+  "playerFallback": "игрок",
+  "languageUsage": "Использование: /lang ru или /lang en",
+  "languageChanged": "Язык ответов переключён на русский.",
+  "languageUnknown": "Неизвестный язык. Доступно: ru, en."
+}

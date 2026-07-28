@@ -1,0 +1,39 @@
+name: Fork integration proposal
+description: Offer a tested change developed in a public fork.
+title: "[fork] "
+labels: ["fork-integration"]
+body:
+  - type: input
+    id: fork_url
+    attributes:
+      label: Fork URL
+    validations:
+      required: true
+  - type: input
+    id: comparison_url
+    attributes:
+      label: Comparison URL
+      placeholder: https://github.com/OWNER/REPOSITORY/compare/...
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Tested commit SHA
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Change summary and validation
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Required confirmations
+      options:
+        - label: The fork preserves LICENSE, NOTICE and author attribution.
+          required: true
+        - label: The proposed change contains no credentials, private data or unlicensed material.
+          required: true

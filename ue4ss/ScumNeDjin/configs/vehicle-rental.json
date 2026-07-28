@@ -1,0 +1,66 @@
+{
+  "Enabled": true,
+  "DefaultRentalMinutes": 10,
+  "MinRentalMinutes": 10,
+  "MaxRentalMinutes": 60,
+  "ChargePenaltyOnMissingVehicle": true,
+  "EnableRuntimeVehicleReturnDestroy": true,
+  "EnableRuntimeVehicleExpireDestroy": true,
+  "EnableRuntimeVehicleTrackAfterSpawn": true,
+  "EnableRuntimeVehicleGenericClassFallback": false,
+  "CaptureVehiclesBeforeSpawn": false,
+  "ExpireDestroyMaxAttempts": 6,
+  "RuntimeDestroyResolveCooldownSeconds": 45,
+  "CleanupMaxPerRun": 1,
+  "RefreshPlayerBeforeVehicleSpawn": false,
+  "GlobalSpawnCooldownSeconds": 60,
+  "PlayerSpawnCooldownSeconds": 600,
+  "DefaultMissingVehiclePenalty": 25000,
+  "WarningMinutesBeforeExpiry": [
+    5,
+    1
+  ],
+  "Vehicles": [
+    {
+      "Alias": "rager",
+      "DisplayName": "Rager",
+      "AssetName": "BPC_Rager",
+      "PricePer10Minutes": 15000,
+      "InitialCharge": 5000,
+      "DefaultMinutes": 10,
+      "MaxMinutes": 120,
+      "MissingVehiclePenalty": 50000
+    },
+    {
+      "Alias": "wolfswaggen",
+      "DisplayName": "WolfsWagen",
+      "AssetName": "BPC_WolfsWagen",
+      "PricePer10Minutes": 12000,
+      "InitialCharge": 4000,
+      "DefaultMinutes": 10,
+      "MaxMinutes": 120,
+      "MissingVehiclePenalty": 50000
+    },
+    {
+      "Alias": "laika",
+      "DisplayName": "Laika",
+      "AssetName": "BPC_Laika",
+      "PricePer10Minutes": 8000,
+      "InitialCharge": 4000,
+      "DefaultMinutes": 10,
+      "MaxMinutes": 120,
+      "MissingVehiclePenalty": 50000
+    },
+    {
+      "Alias": "Dirtbike",
+      "DisplayName": "Транспорт",
+      "AssetName": "BPC_Dirtbike",
+      "PricePer10Minutes": 2500,
+      "InitialCharge": 1000,
+      "DefaultMinutes": 10,
+      "MaxMinutes": 120,
+      "MissingVehiclePenalty": 25000
+    }
+  ],
+  "VipVehicles": []
+}

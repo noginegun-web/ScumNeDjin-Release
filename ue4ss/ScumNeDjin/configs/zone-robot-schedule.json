@@ -1,0 +1,19 @@
+{
+  "Name": "Роботы по зонам",
+  "Description": "Расписание команд для зон. Используйте только проверенные SCUM admin-команды конкретного сервера.",
+  "Enabled": false,
+  "PollIntervalMs": 15000,
+  "Rules": [
+    {
+      "Enabled": false,
+      "Name": "B2 ночной режим",
+      "Zone": "B2",
+      "ScheduleTimesOn": "21:00",
+      "ScheduleTimesOff": "06:00",
+      "CommandTemplateOn": "Announce Роботы включены в зоне {Zone}.",
+      "CommandTemplateOff": "Announce Роботы отключены в зоне {Zone}.",
+      "AnnouncementOn": "[Зоны] Роботы включены в {Zone}.",
+      "AnnouncementOff": "[Зоны] Роботы отключены в {Zone}."
+    }
+  ]
+}

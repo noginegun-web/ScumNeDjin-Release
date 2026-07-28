@@ -1,0 +1,1 @@
+{"Enabled":true,"Prefix":"WILD","Source":"SaveFilesLogs","UseRuntimeHooks":false,"AnnounceSuicides":true,"IncludeDistance":true,"IncludeWeapon":false,"ImportSaveFileKillLog":true,"KillLogImportIntervalMs":5000,"IncludeLocations":false,"FanoutToPlayers":false,"DuplicateWindowSeconds":8}

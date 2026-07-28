@@ -1,0 +1,124 @@
+{
+  "Enabled": false,
+  "Name": "Планировщик заданий",
+  "Description": "Задания сервера по времени или интервалу: cargo drop, world events, admin-команды и наборы предметов в точках карты.",
+  "Instructions": [
+    "Включи Enabled, добавь или выбери задание, затем нажми Сохранить планировщик.",
+    "ScheduleTimes исполняется воркером по локальному времени сервера: 12:00, 18:30. Можно указать несколько значений через запятую.",
+    "Если ScheduleTimes пустой, работает IntervalMinutes.",
+    "Mode=Airdrop вызывает SCUM cargo drop командой ScheduleWorldEvent BP_CargoDropEvent X={X} Y={Y} Z={Z}.",
+    "Mode=WorldEvent запускает выбранный класс события через ScheduleWorldEvent {WorldEventClass} X={X} Y={Y} Z={Z}.",
+    "Mode=SpawnItems выдаёт обычный набор предметов в точку карты.",
+    "Формат ItemsText: ItemId|Количество;ItemId2|Количество."
+  ],
+  "WorldEventClasses": [
+    "BP_CargoDropEvent",
+    "BP_EncounterCargoDropEvent",
+    "BP_DeathmatchGameEvent",
+    "BP_TeamDeathmatchGameEvent",
+    "BP_CTFGameEvent",
+    "BP_DropZoneGameEvent"
+  ],
+  "PollIntervalMs": 15000,
+  "MaxRunsPerTick": 1,
+  "Jobs": [
+    {
+      "Enabled": false,
+      "Name": "Cargo drop B2 в 12:00 и 18:00",
+      "Mode": "Airdrop",
+      "ScheduleTimes": "12:00, 18:00",
+      "IntervalMinutes": 60,
+      "RunOnStartup": false,
+      "PointGroup": "airdrop",
+      "ItemSet": "",
+      "WorldEventClass": "BP_CargoDropEvent",
+      "CommandTemplate": "ScheduleWorldEvent BP_CargoDropEvent X={X} Y={Y} Z={Z}",
+      "Announcement": "[Ивент] Cargo drop вызван в районе {Point}.",
+      "MaxItemsPerRun": 30,
+      "PointCount": 1
+    },
+    {
+      "Enabled": false,
+      "Name": "World event DropZone C2 в 20:00",
+      "Mode": "WorldEvent",
+      "ScheduleTimes": "20:00",
+      "IntervalMinutes": 180,
+      "RunOnStartup": false,
+      "PointGroup": "world-event",
+      "ItemSet": "",
+      "WorldEventClass": "BP_DropZoneGameEvent",
+      "CommandTemplate": "ScheduleWorldEvent {WorldEventClass} X={X} Y={Y} Z={Z}",
+      "Announcement": "[Ивент] {WorldEventClass} запущен в районе {Point}.",
+      "MaxItemsPerRun": 1,
+      "PointCount": 1
+    },
+    {
+      "Enabled": false,
+      "Name": "Тайник с лутом в 21:00",
+      "Mode": "SpawnItems",
+      "ScheduleTimes": "21:00",
+      "IntervalMinutes": 120,
+      "RunOnStartup": false,
+      "PointGroup": "stash",
+      "ItemSet": "basic",
+      "WorldEventClass": "",
+      "CommandTemplate": "",
+      "Announcement": "[Ивент] Тайник {ItemSet} появился в районе {Point}.",
+      "MaxItemsPerRun": 30,
+      "PointCount": 1
+    },
+    {
+      "Enabled": false,
+      "Name": "Команда по расписанию",
+      "Mode": "Command",
+      "ScheduleTimes": "03:55",
+      "IntervalMinutes": 1440,
+      "RunOnStartup": false,
+      "PointGroup": "",
+      "ItemSet": "",
+      "WorldEventClass": "",
+      "CommandTemplate": "Announce Плановая проверка сервера.",
+      "Announcement": "",
+      "MaxItemsPerRun": 1,
+      "PointCount": 1
+    }
+  ],
+  "Points": [
+    {
+      "Name": "B2 cargo",
+      "Group": "airdrop",
+      "X": -107205,
+      "Y": -250108,
+      "Z": 27875.398,
+      "Radius": 0
+    },
+    {
+      "Name": "C2 world event",
+      "Group": "world-event",
+      "X": -153247,
+      "Y": 289822,
+      "Z": 200,
+      "Radius": 150
+    },
+    {
+      "Name": "C2 лес",
+      "Group": "stash",
+      "X": -153247,
+      "Y": 289822,
+      "Z": 200,
+      "Radius": 150
+    }
+  ],
+  "ItemSets": [
+    {
+      "Name": "basic",
+      "Weight": 1,
+      "ItemsText": "Apple_2|2;CannedGoulash|1;Emergency_bandage_Big|1"
+    },
+    {
+      "Name": "cargo",
+      "Weight": 1,
+      "ItemsText": "MRE_TunaSalad|2;Water_05l|2;Emergency_bandage_Big|2"
+    }
+  ]
+}

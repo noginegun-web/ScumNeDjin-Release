@@ -1,0 +1,123 @@
+name: Fork watch
+
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+
+jobs:
+  report:
+    if: github.repository_owner == 'noginegun-web'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Collect public fork activity
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const crypto = require('crypto');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const upstream = await github.rest.repos.get({ owner, repo });
+            const base = upstream.data.default_branch;
+            const forks = await github.paginate(github.rest.repos.listForks, {
+              owner, repo, per_page: 100, sort: 'newest'
+            });
+            const rows = [];
+            for (const fork of forks) {
+              const forkOwner = fork.owner.login;
+              const branch = fork.default_branch || base;
+              let comparison = null;
+              let status = 'unavailable';
+              try {
+                comparison = await github.rest.repos.compareCommits({
+                  owner, repo,
+                  basehead: owner + ':' + base + '...' + forkOwner + ':' + branch
+                });
+                status = comparison.data.status;
+              } catch (error) {
+                status = 'unavailable: ' + (error.status || 'unknown');
+              }
+              rows.push({
+                fork: fork.html_url,
+                owner: forkOwner,
+                branch,
+                pushed_at: fork.pushed_at,
+                status,
+                ahead_by: comparison ? comparison.data.ahead_by : null,
+                behind_by: comparison ? comparison.data.behind_by : null,
+                compare: 'https://github.com/' + owner + '/' + repo + '/compare/' + owner + ':' + base + '...' + forkOwner + ':' + branch
+              });
+            }
+            const pulls = await github.paginate(github.rest.pulls.list, {
+              owner, repo, state: 'open', per_page: 100
+            });
+            const report = {
+              generated_at: new Date().toISOString(),
+              upstream: owner + '/' + repo,
+              base_branch: base,
+              forks: rows,
+              open_pull_requests: pulls.map(pr => ({
+                number: pr.number,
+                title: pr.title,
+                url: pr.html_url,
+                head: pr.head.label
+              }))
+            };
+            fs.writeFileSync('fork-watch.json', JSON.stringify(report, null, 2));
+            const digest = crypto.createHash('sha256')
+              .update(JSON.stringify({ forks: rows, pulls: report.open_pull_requests }))
+              .digest('hex');
+            const table = rows.length
+              ? rows.map(row => '| [' + row.owner + '](' + row.fork + ') | ' + row.branch + ' | ' + (row.ahead_by ?? '-') + ' | ' + (row.behind_by ?? '-') + ' | [compare](' + row.compare + ') |').join('\n')
+              : '| No public forks | - | - | - | - |';
+            const body = [
+              '<!-- fork-watch-digest:' + digest + ' -->',
+              '## Public fork activity',
+              '',
+              'Base branch: ' + base,
+              '',
+              '| Fork | Branch | Ahead | Behind | Comparison |',
+              '| --- | --- | ---: | ---: | --- |',
+              table,
+              '',
+              'Open pull requests: ' + report.open_pull_requests.length,
+              '',
+              'The complete machine-readable report is attached to the matching workflow run.'
+            ].join('\n');
+            const title = '[fork-watch] Public fork activity';
+            const existing = await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', labels: 'fork-watch', per_page: 100
+            });
+            let issue = existing.data.find(candidate => candidate.title === title);
+            if (!issue) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner, repo, name: 'fork-watch', color: '1d76db', description: 'Automated public fork activity report'
+                });
+              } catch (_) {}
+              issue = (await github.rest.issues.create({
+                owner, repo, title, body, labels: ['fork-watch']
+              })).data;
+            } else {
+              const match = (issue.body || '').match(/fork-watch-digest:([a-f0-9]+)/);
+              const oldDigest = match ? match[1] : '';
+              if (oldDigest !== digest) {
+                await github.rest.issues.update({ owner, repo, issue_number: issue.number, body });
+              }
+            }
+            await core.summary
+              .addHeading('Public fork activity')
+              .addRaw('Forks checked: ' + rows.length + '\n\nOpen pull requests: ' + report.open_pull_requests.length)
+              .write();
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: fork-watch
+          path: fork-watch.json
+          retention-days: 30

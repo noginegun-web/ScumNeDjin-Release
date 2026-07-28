@@ -1,0 +1,28 @@
+name: Feature proposal
+description: Propose a focused, maintainable improvement.
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: licensing
+    attributes:
+      label: Contribution boundary
+      options:
+        - label: This proposal does not require private data or unlicensed assets.
+          required: true

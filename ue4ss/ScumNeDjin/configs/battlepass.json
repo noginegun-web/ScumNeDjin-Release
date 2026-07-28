@@ -1,0 +1,561 @@
+{
+  "Name": "Battlepass",
+  "Description": "Автоматическая 30-дневная серия наград за реальные дни входа. Выдача начинается через минуту после входа, чтобы персонаж успел прогрузиться.",
+  "Enabled": true,
+  "MaxDays": 30,
+  "DelayAfterJoinSeconds": 60,
+  "PollIntervalMs": 5000,
+  "RetryWindowSeconds": 300,
+  "InterItemDelayMs": 1500,
+  "RequiredPermission": "",
+  "SuccessMessage": "Battlepass награда {day}/{maxDays} выдана.",
+  "VipSettings": {
+    "Enabled": true,
+    "SuccessMessage": "VIP Battlepass награда {day}/{maxDays} выдана.",
+    "RequiredPermission": "battlepass.vip"
+  },
+  "Rewards": [
+    {
+      "Enabled": true,
+      "Day": 1,
+      "MoneyAmount": 3000,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 2,
+      "MoneyAmount": 5000,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "Apple_2|2",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 3,
+      "MoneyAmount": 1000,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 4,
+      "MoneyAmount": 2000,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 5,
+      "MoneyAmount": 2250,
+      "GoldAmount": 0,
+      "FameAmount": 25,
+      "ItemsText": "CannedGoulash|1",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 6,
+      "MoneyAmount": 2500,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 7,
+      "MoneyAmount": 2750,
+      "GoldAmount": 1,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 8,
+      "MoneyAmount": 3000,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 9,
+      "MoneyAmount": 3250,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 10,
+      "MoneyAmount": 3500,
+      "GoldAmount": 0,
+      "FameAmount": 25,
+      "ItemsText": "Emergency_bandage_Big|1",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 11,
+      "MoneyAmount": 3750,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 12,
+      "MoneyAmount": 4000,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 13,
+      "MoneyAmount": 4250,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 14,
+      "MoneyAmount": 4500,
+      "GoldAmount": 1,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 15,
+      "MoneyAmount": 4750,
+      "GoldAmount": 0,
+      "FameAmount": 25,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 16,
+      "MoneyAmount": 5000,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 17,
+      "MoneyAmount": 5250,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 18,
+      "MoneyAmount": 5500,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 19,
+      "MoneyAmount": 5750,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 20,
+      "MoneyAmount": 6000,
+      "GoldAmount": 0,
+      "FameAmount": 25,
+      "ItemsText": "Apple_2|2;CannedGoulash|1",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 21,
+      "MoneyAmount": 6250,
+      "GoldAmount": 1,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 22,
+      "MoneyAmount": 6500,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 23,
+      "MoneyAmount": 6750,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 24,
+      "MoneyAmount": 7000,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 25,
+      "MoneyAmount": 7250,
+      "GoldAmount": 0,
+      "FameAmount": 25,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 26,
+      "MoneyAmount": 7500,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 27,
+      "MoneyAmount": 7750,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 28,
+      "MoneyAmount": 8000,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 29,
+      "MoneyAmount": 8250,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 30,
+      "MoneyAmount": 8500,
+      "GoldAmount": 1,
+      "FameAmount": 25,
+      "ItemsText": "MRE_Cheeseburger|1;Emergency_bandage_Big|1",
+      "Message": "Battlepass награда {day}/{maxDays} получена."
+    }
+  ],
+  "VipRewards": [
+    {
+      "Enabled": true,
+      "Day": 1,
+      "MoneyAmount": 5000,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 2,
+      "MoneyAmount": 8000,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "Apple_2|4",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 3,
+      "MoneyAmount": 3000,
+      "GoldAmount": 0,
+      "FameAmount": 50,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 4,
+      "MoneyAmount": 4100,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 5,
+      "MoneyAmount": 4500,
+      "GoldAmount": 2,
+      "FameAmount": 0,
+      "ItemsText": "CannedGoulash|2",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 6,
+      "MoneyAmount": 4900,
+      "GoldAmount": 0,
+      "FameAmount": 50,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 7,
+      "MoneyAmount": 5300,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 8,
+      "MoneyAmount": 5700,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 9,
+      "MoneyAmount": 6100,
+      "GoldAmount": 0,
+      "FameAmount": 50,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 10,
+      "MoneyAmount": 6500,
+      "GoldAmount": 2,
+      "FameAmount": 0,
+      "ItemsText": "Emergency_bandage_Big|2",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 11,
+      "MoneyAmount": 6900,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 12,
+      "MoneyAmount": 7300,
+      "GoldAmount": 0,
+      "FameAmount": 50,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 13,
+      "MoneyAmount": 7700,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 14,
+      "MoneyAmount": 8100,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 15,
+      "MoneyAmount": 8500,
+      "GoldAmount": 2,
+      "FameAmount": 50,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 16,
+      "MoneyAmount": 8900,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 17,
+      "MoneyAmount": 9300,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 18,
+      "MoneyAmount": 9700,
+      "GoldAmount": 0,
+      "FameAmount": 50,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 19,
+      "MoneyAmount": 10100,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 20,
+      "MoneyAmount": 10500,
+      "GoldAmount": 2,
+      "FameAmount": 0,
+      "ItemsText": "Apple_2|4;CannedGoulash|2",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 21,
+      "MoneyAmount": 10900,
+      "GoldAmount": 0,
+      "FameAmount": 50,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 22,
+      "MoneyAmount": 11300,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 23,
+      "MoneyAmount": 11700,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 24,
+      "MoneyAmount": 12100,
+      "GoldAmount": 0,
+      "FameAmount": 50,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 25,
+      "MoneyAmount": 12500,
+      "GoldAmount": 2,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 26,
+      "MoneyAmount": 12900,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 27,
+      "MoneyAmount": 13300,
+      "GoldAmount": 0,
+      "FameAmount": 50,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 28,
+      "MoneyAmount": 13700,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 29,
+      "MoneyAmount": 14100,
+      "GoldAmount": 0,
+      "FameAmount": 0,
+      "ItemsText": "",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    },
+    {
+      "Enabled": true,
+      "Day": 30,
+      "MoneyAmount": 14500,
+      "GoldAmount": 2,
+      "FameAmount": 50,
+      "ItemsText": "MRE_Cheeseburger|2;Emergency_bandage_Big|2",
+      "Message": "VIP Battlepass награда {day}/{maxDays} получена."
+    }
+  ]
+}

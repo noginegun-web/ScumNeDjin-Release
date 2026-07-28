@@ -1,0 +1,34 @@
+{
+  "Name": "Апгрейд предметов",
+  "Description": "Заменяет предмет в руках на настроенный ResultItemId после оплаты. Включайте только для проверенных пар предметов.",
+  "Enabled": false,
+  "AllowReplacement": false,
+  "AllowSameItemId": true,
+  "RequiredPermission": "",
+  "CooldownSeconds": 60,
+  "RequireItemInHands": true,
+  "SpawnResultNearPlayer": true,
+  "SuccessMessage": "Апгрейд выполнен: {source} -> {result}.",
+  "Rules": [
+    {
+      "Enabled": false,
+      "Alias": "barrett-light",
+      "DisplayName": "Лёгкий Barrett",
+      "SourceItemId": "Weapon_M82A1",
+      "ResultItemId": "Weapon_M82A1",
+      "Weight": 1,
+      "Health": 0,
+      "Uses": 0,
+      "Dirtiness": 0,
+      "AmmoCount": 0,
+      "CashValue": 0,
+      "KeyCardSector": "",
+      "CostMoney": 10000,
+      "CostGold": 0,
+      "CostFame": 0,
+      "RequiredCostItemId": "",
+      "RequiredCostItemQuantity": 0,
+      "SuccessMessage": "Предмет улучшен. Заберите новую версию рядом с собой."
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "Name": "Переводы денег",
+  "Description": "Игроки переводят деньги друг другу командой /sendmoney <ник|SteamID> <сумма> или /pay <ник|SteamID> <сумма>.",
+  "Enabled": true,
+  "RequiredPermission": "",
+  "Currency": "Normal",
+  "MinAmount": 100,
+  "MaxAmount": 100000,
+  "DailyLimit": 500000,
+  "CooldownSeconds": 30,
+  "FeePercent": 0,
+  "FeeFixed": 0,
+  "RequireBothOnline": true,
+  "AllowSelfTransfer": false,
+  "SuccessMessage": "Перевод отправлен: ${amount} игроку {target}.",
+  "ReceivedMessage": "Получен перевод ${amount} от {sender}.",
+  "UsageMessage": "Формат: /sendmoney <ник|SteamID> <сумма>."
+}

@@ -1,0 +1,9 @@
+{
+  "helpPrefix": "Commands",
+  "helpLanguageHint": "Reply language: English. Change language: /lang en or /lang ru.",
+  "hello": "Hello, {name}. The server system is working.",
+  "playerFallback": "player",
+  "languageUsage": "Usage: /lang ru or /lang en",
+  "languageChanged": "Reply language switched to English.",
+  "languageUnknown": "Unknown language. Available: ru, en."
+}

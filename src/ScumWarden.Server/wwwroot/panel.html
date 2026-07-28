@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SCUM NEDJIN</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="/app.css?v=20260721_loot_help_editor_v2" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">
+        <img class="brand-avatar" src="/brand-mark.svg" alt="" />
+        <div>
+          <div class="brand-name">SCUM NEDJIN</div>
+          <div class="brand-sub">Панель управления</div>
+        </div>
+      </div>
+      <div class="connection">
+        <label>Подключение</label>
+        <input id="serverHost" placeholder="IP:PORT или URL панели" />
+        <input id="apiKey" type="password" autocomplete="off" placeholder="Ключ доступа" />
+        <button class="btn primary" id="connectBtn">Подключиться</button>
+        <label>Сервер</label>
+        <select id="serverSelect"></select>
+        <div class="server-status">
+          <span class="dot" id="serverStatusDot"></span>
+          <span id="serverStatusText">проверка...</span>
+        </div>
+        <label for="panelLanguage">Язык панели</label>
+        <select id="panelLanguage">
+          <option value="ru">Русский</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-page="servers"><span>⌂</span> Сервер</button>
+        <button class="nav-item" data-page="players"><span>◎</span> Игроки</button>
+        <button class="nav-item" data-page="squads"><span>◇</span> Отряды</button>
+        <button class="nav-item" data-page="chat"><span>☰</span> Чат</button>
+        <button class="nav-item" data-page="kills"><span>×</span> Убийства</button>
+        <button class="nav-item" data-page="modules"><span>□</span> Плагины</button>
+        <button class="nav-item" data-page="services"><span>★</span> Сервисы</button>
+        <button class="nav-item" data-page="console"><span>›</span> Консоль</button>
+        <button class="nav-item" data-page="downloads"><span>↓</span> Загрузки</button>
+      </nav>
+      <div class="sidebar-note">
+        Команды и статус обрабатываются автоматически. Ключ доступа храните только у администраторов.
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="top">
+        <div>
+          <div class="crumb" id="crumb">Платформа</div>
+          <h1 id="pageTitle">Обзор сервера</h1>
+        </div>
+        <div class="top-actions">
+          <a class="btn" href="https://discord.gg/kQwBDdzxEH" target="_blank" rel="noopener noreferrer">DsProject</a>
+          <button class="btn" type="button" id="supportAuthorBtn">Поддержка автора</button>
+          <span class="pill" id="bridgePill">мост: ...</span>
+          <span class="pill" id="playersPill">игроки: 0</span>
+          <button class="icon-btn" title="Обновить" id="refreshBtn">↻</button>
+        </div>
+      </header>
+
+      <section class="page active dashboard-page" id="page-servers">
+        <div class="dashboard-frame">
+        <div class="dashboard-status-strip">
+          <span><small>Сервер</small><strong id="dashboardServerName">SCUM NEDJIN</strong></span>
+          <span><small>Статус</small><strong id="dashboardStatusText">проверка</strong></span>
+        </div>
+        <div class="metrics stats-grid" id="statusGrid"></div>
+        <div class="server-list" id="serverList"></div>
+        <div class="split diagnostics-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Последние события</h2>
+              <button class="icon-btn" title="Обновить события" id="refreshEventsSmall">↻</button>
+            </div>
+            <div class="event-list" id="recentEvents"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Быстрые действия</h2>
+            </div>
+            <div class="quick-grid">
+              <input id="quickMessage" placeholder="Сообщение всем игрокам" />
+              <button class="btn primary" id="quickBroadcast">Отправить</button>
+              <input id="quickCommand" placeholder="#Announce Перезапуск через 10 минут" />
+              <button class="btn" id="quickCommandRun">Выполнить</button>
+            </div>
+            <pre class="result" id="quickResult"></pre>
+          </section>
+        </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-players">
+        <div class="players-summary" id="playersSummary"></div>
+        <div class="toolbar players-toolbar">
+          <input id="playerSearch" placeholder="Поиск по имени или SteamID" />
+          <select id="playersSort">
+            <option value="name">Сортировка: имя</option>
+            <option value="money">Сортировка: деньги</option>
+            <option value="fame">Сортировка: слава</option>
+            <option value="login">Сортировка: последний вход</option>
+          </select>
+          <button class="btn" id="refreshPlayers">Обновить</button>
+        </div>
+        <section id="playerProfile" class="player-profile-view hidden" aria-hidden="true">
+          <div class="profile-header card">
+            <div class="profile-avatar" id="profAvatar">--</div>
+            <div class="profile-info">
+              <h2 id="profName">Игрок</h2>
+              <div class="profile-badges">
+                <span class="badge offline" id="profStatus">оффлайн</span>
+                <span class="badge" id="profSteamId">SteamID не выбран</span>
+              </div>
+            </div>
+            <div class="profile-stats">
+              <div class="stat-item">
+                <label>Профиль</label>
+                <span id="profProfileId">-</span>
+              </div>
+            </div>
+            <button class="btn subtle" id="profClose" type="button">Скрыть</button>
+          </div>
+
+          <div class="profile-tools-grid">
+            <div class="tool-card card">
+              <h3><span class="tool-icon">ITEM</span> Выдача предметов</h3>
+              <div class="tool-body">
+                <input type="text" id="profItemSearch" list="itemCatalog" placeholder="ID предмета или поиск по каталогу" />
+                <div class="input-row">
+                  <input type="number" id="profItemAmount" value="1" min="1" placeholder="Кол-во" />
+                  <button class="btn primary" id="profSpawnBtn" type="button">Выдать игроку</button>
+                </div>
+                <div class="quick-presets">
+                  <button class="preset-tag" type="button" data-profile-preset="CannedGoulash">Еда</button>
+                  <button class="preset-tag" type="button" data-profile-preset="Water_05L">Вода</button>
+                  <button class="preset-tag" type="button" data-profile-preset="Emergency_bandage_Big">Бинт</button>
+                </div>
+                <div class="welcome-pack-strip profile-welcome-strip" id="playerWelcomeStripProfile">
+                  <div>
+                    <b id="playerWelcomeStatusProfile">Стартпак</b>
+                    <span id="playerWelcomeHintProfile">Статус обновится при открытии игрока.</span>
+                  </div>
+                  <div class="button-row compact welcome-pack-actions">
+                    <button class="btn primary" id="playerActionWelcomeProfile" type="button">Выдать стартпак</button>
+                    <button class="btn" id="playerActionWelcomeResetProfile" type="button">Снять стартпак</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tool-card card">
+              <h3><span class="tool-icon">MOVE</span> Перемещение</h3>
+              <div class="tool-body">
+                <div class="coords-row">
+                  <input type="number" id="profX" placeholder="X" />
+                  <input type="number" id="profY" placeholder="Y" />
+                  <input type="number" id="profZ" placeholder="Z" />
+                </div>
+                <button class="btn primary" id="profTeleportBtn" type="button">Переместить игрока</button>
+                <button class="btn" id="profOpenPositionBtn" type="button">Открыть расширенный телепорт</button>
+              </div>
+            </div>
+
+            <div class="tool-card card">
+              <h3><span class="tool-icon">TOOLS</span> Управление</h3>
+              <div class="tool-body button-column">
+                <button class="btn" id="profInventoryBtn" type="button">Инвентарь</button>
+                <button class="btn" id="profBalanceBtn" type="button">Баланс</button>
+                <button class="btn" id="profCharacterBtn" type="button">Навыки и атрибуты</button>
+                <button class="btn" id="profVehicleBtn" type="button">Транспорт</button>
+              </div>
+            </div>
+
+            <div class="tool-card card danger-zone">
+              <h3><span class="tool-icon">MOD</span> Модерация</h3>
+              <div class="tool-body">
+                <input type="text" id="profReason" placeholder="Причина действия" />
+                <div class="input-row">
+                  <button class="btn" id="profKickBtn" type="button">Кикнуть</button>
+                  <button class="btn danger" id="profBanBtn" type="button">Забанить</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="profileActionDock" class="profile-action-dock hidden" aria-hidden="true"></div>
+          <pre class="result profile-result" id="profActionResult"></pre>
+        </section>
+        <div class="players" id="playersList"></div>
+      </section>
+
+      <section class="page map-disabled" id="page-map" hidden aria-hidden="true">
+        <div class="page-head">
+          <div>
+            <h2>Живая карта</h2>
+            <p>Live-координаты игроков, транспорта и базовых объектов поверх карты.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn" id="refreshMap">Обновить</button>
+            <button class="btn" id="mapZoomOut">-</button>
+            <button class="btn" id="mapReset">Сброс</button>
+            <button class="btn" id="mapZoomIn">+</button>
+          </div>
+        </div>
+        <div class="map-layout">
+          <div class="map-frame">
+            <img id="mapImage" alt="Карта SCUM" />
+            <div class="map-sectors" id="mapSectors"></div>
+            <div class="markers" id="mapMarkers"></div>
+          </div>
+          <aside class="panel map-side">
+            <h2>Слои</h2>
+            <label><input type="checkbox" id="layerPlayers" checked /> Игроки</label>
+            <label><input type="checkbox" id="layerVehicles" checked /> Транспорт</label>
+            <label><input type="checkbox" id="layerChests" checked /> Сундуки</label>
+            <label><input type="checkbox" id="layerFlags" checked /> Флаги</label>
+            <div class="stat-list" id="mapStats"></div>
+            <h2>Выбранная точка</h2>
+            <div class="stat-list" id="mapSelection">Ничего не выбрано.</div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="page" id="page-squads">
+        <div class="toolbar">
+          <input id="squadSearch" placeholder="Поиск по отряду или участнику" />
+          <button class="btn" id="refreshSquads">Обновить</button>
+        </div>
+        <div class="panel">
+          <div class="event-list tall" id="squadsList"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-chat">
+        <div class="split">
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Чат сервера</h2>
+              <button class="icon-btn" title="Обновить" id="refreshChat">↻</button>
+            </div>
+            <div class="toolbar single">
+              <select id="chatChannel">
+                <option value="global">Глобальный</option>
+                <option value="local">Локальный</option>
+                <option value="squad">Отряд</option>
+                <option value="admin">Админ</option>
+                <option value="command">Команды</option>
+                <option value="killfeed">Killfeed</option>
+                <option value="nedjin">NeDjin</option>
+              </select>
+              <input id="chatSearch" placeholder="Поиск по сообщению или игроку" />
+            </div>
+            <div class="event-list tall" id="chatList"></div>
+          </section>
+          <section class="panel">
+            <h2>Отправка</h2>
+            <input id="chatTarget" placeholder="SteamID или имя, пусто = всем" />
+            <select id="chatSendChannel">
+              <option value="server">Сервер</option>
+            </select>
+            <textarea id="chatMessage" placeholder="Сообщение"></textarea>
+            <div class="button-row">
+              <button class="btn primary" id="sendChat">Отправить</button>
+              <button class="btn" id="clearChat" type="button">Очистить логи</button>
+            </div>
+            <pre class="result compact" id="chatResult"></pre>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-kills">
+        <div class="toolbar">
+          <input id="killsSearch" placeholder="Поиск по убийце, жертве, оружию" />
+          <button class="btn" id="refreshKills">Обновить</button>
+          <button class="btn" id="clearKills" type="button">Очистить убийства</button>
+        </div>
+        <div class="panel">
+          <div class="event-list tall" id="killsList"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-economy">
+        <div class="page-head">
+          <div>
+            <h2>Экономика</h2>
+            <p>Обзор денег, банка и платных действий. Начисления выполняются из карточки выбранного игрока.</p>
+          </div>
+          <button class="btn" id="refreshEconomy">Обновить</button>
+        </div>
+        <div class="economy-tabs">
+          <button class="tab active" type="button" data-economy-tab="overview">Обзор</button>
+          <button class="tab" type="button" data-economy-tab="prices">Цены</button>
+          <button class="tab" type="button" data-economy-tab="wallets">Кошельки</button>
+          <button class="tab" type="button" data-economy-tab="bank">Банк</button>
+          <button class="tab" type="button" data-economy-tab="recent">Операции</button>
+        </div>
+        <div class="economy-layout">
+          <section class="panel economy-main-panel">
+            <div class="panel-head">
+              <h2>Деньги и расходы</h2>
+            </div>
+            <div class="event-list tall" id="economyList"></div>
+          </section>
+          <section class="panel economy-legacy-actions" hidden>
+            <h2>Баланс игрока</h2>
+            <input id="economyTarget" placeholder="SteamID или имя" />
+            <select id="economyCurrency">
+              <option value="Normal">Обычные деньги</option>
+              <option value="Gold">Золото</option>
+            </select>
+            <input id="economyAmount" type="number" placeholder="Изменение баланса" />
+            <button class="btn primary" id="economyApply">Изменить баланс</button>
+            <input id="fameAmount" type="number" placeholder="Начислить славу (+/-)" />
+            <button class="btn" id="fameApply">Начислить славу</button>
+            <pre class="result compact" id="economyResult"></pre>
+          </section>
+        </div>
+      </section>
+
+      <section class="page modules-layout" id="page-modules">
+        <div class="page-head">
+          <div>
+            <h2>Плагины</h2>
+            <p>Настройки игровых команд, сервисов и интеграций.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn" id="reloadModules" title="Безопасно перечитать состояние панели без перезапуска сервера">Обновить панель</button>
+            <button class="btn danger" id="deleteModule" hidden>Отключить</button>
+          </div>
+        </div>
+        <div class="players-summary" id="moduleSummary"></div>
+        <div class="modules-wrap">
+          <div class="module-list" id="moduleList"></div>
+          <section class="panel module-editor">
+            <div class="panel-head">
+              <h2 id="moduleTitle">Модуль</h2>
+            </div>
+            <div class="module-actions" id="moduleActions"></div>
+            <div class="module-fields" id="moduleFields"></div>
+            <div class="module-catalog" id="moduleCatalog">
+              <div class="module-catalog-head">
+                <h3>Каталог</h3>
+                <span class="muted-line" id="moduleCatalogCount">0 / 0</span>
+              </div>
+              <div class="catalog-toolbar">
+                <input id="moduleCatalogSearch" placeholder="Поиск предмета или транспорта" />
+                <select id="moduleCatalogMode">
+                  <option value="items">Предметы</option>
+                  <option value="vehicles">Транспорт</option>
+                </select>
+              </div>
+              <div class="catalog-categories" id="moduleCatalogCategories"></div>
+              <div class="catalog-grid" id="moduleCatalogGrid"></div>
+              <div class="catalog-selected" id="moduleCatalogSelected">Ничего не выбрано.</div>
+            </div>
+            <div class="config-container">
+              <label for="moduleConfig">Расширенные настройки</label>
+              <textarea id="moduleConfig" spellcheck="false"></textarea>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-services">
+        <div class="service-workspace-head">
+          <div>
+            <h2>Ручные операции</h2>
+            <p>Быстрые действия для выбранного игрока. Настройки этих систем находятся во вкладке «Плагины».</p>
+          </div>
+          <input id="serviceTarget" placeholder="SteamID или имя игрока для действий ниже" />
+        </div>
+        <div class="service-tabs">
+          <button class="tab active" type="button" data-service-tab="player">Игрок</button>
+          <button class="tab" type="button" data-service-tab="travel">Перемещение</button>
+          <button class="tab" type="button" data-service-tab="vehicle">Транспорт</button>
+          <button class="tab" type="button" data-service-tab="wargm">Wargm</button>
+          <button class="tab" type="button" data-service-tab="discord">Discord</button>
+        </div>
+        <div class="service-grid">
+          <section class="panel service-card service-card-welcome" data-service-section="player">
+            <h2>Стартовый набор</h2>
+            <p class="service-card-note">Выдача и сброс WelcomePack для тестов или ручной помощи.</p>
+            <button class="btn primary" id="welcomeClaim">Выдать набор</button>
+            <button class="btn" id="welcomeReset">Сбросить таймеры</button>
+            <div class="event-list compact-list" id="welcomeTimers"></div>
+          </section>
+          <section class="panel service-card service-card-home" data-service-section="player">
+            <h2>Домашние точки</h2>
+            <p class="service-card-note">Сохранённые точки игрока и быстрый возврат к ним.</p>
+            <input id="homeLabel" placeholder="Название точки" />
+            <button class="btn primary" id="homeSet">Сохранить текущую позицию</button>
+            <button class="btn" id="homeListRefresh">Обновить список</button>
+            <div class="event-list compact-list" id="homeList"></div>
+          </section>
+          <section class="panel service-card service-card-travel" data-service-section="travel" hidden>
+            <h2>Быстрое перемещение</h2>
+            <p class="service-card-note">Ручной телепорт по маршруту или координатам.</p>
+            <select id="fastRoute"></select>
+            <input id="fastFare" type="number" min="0" placeholder="Сумма списания (если нужна)" />
+            <div class="muted-line" id="fastPricePreview">Выбери игрока и маршрут, чтобы увидеть цену.</div>
+            <div class="triple">
+              <input id="fastX" type="number" placeholder="X" />
+              <input id="fastY" type="number" placeholder="Y" />
+              <input id="fastZ" type="number" placeholder="Z" />
+            </div>
+            <button class="btn primary" id="fastTravelGo">Телепортировать</button>
+          </section>
+          <section class="panel service-card service-card-rental" data-service-section="vehicle" hidden>
+            <h2>Аренда транспорта</h2>
+            <p class="service-card-note">Создать арендованный транспорт рядом с игроком.</p>
+            <select id="rentalVehicle"></select>
+            <input id="rentalMinutes" type="number" min="1" max="1440" value="10" placeholder="Минуты аренды" />
+            <button class="btn primary" id="rentVehicle">Выдать транспорт</button>
+            <button class="btn" id="rentalCleanup">Очистить истёкшую аренду</button>
+          </section>
+          <section class="panel service-card service-card-scan" data-service-section="travel" hidden>
+            <h2>Скан текущего квадрата</h2>
+            <p class="service-card-note">Проверка сектора вокруг выбранного игрока.</p>
+            <button class="btn" id="scanSector">Сканировать игрока</button>
+          </section>
+          <section class="panel wargm-panel wide" data-service-section="wargm" hidden>
+            <div class="wargm-head">
+              <div>
+                <h2>Wargm выдача</h2>
+                <p>Цель берется из поля SteamID или имени игрока сверху.</p>
+              </div>
+              <span class="wargm-mode-pill" id="wargmModePill">Предметы</span>
+            </div>
+
+            <div class="wargm-topline">
+              <label class="wargm-field">
+                <span>Что выдать</span>
+                <select id="wargmMode">
+                  <option value="item">Предметы / кейс</option>
+                  <option value="vehicle">Транспорт</option>
+                  <option value="cargodrop">Cargo drop на игрока</option>
+                  <option value="vip">VIP</option>
+                  <option value="money">Баланс</option>
+                  <option value="gold">Золото</option>
+                  <option value="fame">Очки славы</option>
+                  <option value="skill">Навык</option>
+                  <option value="allskills">Все навыки</option>
+                  <option value="attributes">Атрибуты</option>
+                  <option value="command">Команда</option>
+                </select>
+              </label>
+              <div class="wargm-hint" id="wargmModeHint"></div>
+            </div>
+
+            <div class="wargm-mode-block" data-wargm-mode="item">
+              <div class="wargm-block-title">
+                <h3>Предметы или кейс</h3>
+                <span>Можно добавить несколько строк: всё уйдет одной заявкой.</span>
+              </div>
+              <div class="wargm-item-builder">
+                <label class="wargm-field">
+                  <span>ID предмета</span>
+                  <input id="wargmItemId" list="itemCatalog" placeholder="Например Weapon_MK18" />
+                </label>
+                <label class="wargm-field small">
+                  <span>Кол-во</span>
+                  <input id="wargmQty" type="number" min="1" value="1" />
+                </label>
+                <button class="btn" id="wargmAddItem" type="button">Добавить</button>
+              </div>
+              <div class="mini-list wargm-items-list" id="wargmItemsList"></div>
+              <button class="btn subtle" id="wargmClearItems" type="button">Очистить набор</button>
+            </div>
+
+            <div class="wargm-mode-block" data-wargm-mode="vehicle">
+              <label class="wargm-field">
+                <span>ID транспорта</span>
+                <input id="wargmVehicleId" list="vehicleCatalog" placeholder="Например BPC_WolfsWagen" />
+              </label>
+            </div>
+
+            <div class="wargm-mode-block" data-wargm-mode="money gold fame vip">
+              <label class="wargm-field">
+                <span>Сумма / дней VIP</span>
+                <input id="wargmAmount" type="number" placeholder="Например 1000 или 30" />
+              </label>
+            </div>
+
+            <div class="wargm-mode-block" data-wargm-mode="skill">
+              <div class="wargm-skill-grid">
+                <label class="wargm-field">
+                  <span>Навык</span>
+                  <input id="wargmSkill" list="skillCatalog" placeholder="Например Handgun" />
+                </label>
+                <label class="wargm-field small">
+                  <span>Уровень</span>
+                  <input id="wargmSkillLevel" type="number" min="0" max="4" value="3" />
+                </label>
+                <label class="wargm-field small">
+                  <span>Опыт</span>
+                  <input id="wargmSkillExperience" type="number" min="0" value="0" />
+                </label>
+              </div>
+            </div>
+
+            <div class="wargm-mode-block" data-wargm-mode="allskills">
+              <div class="wargm-block-title">
+                <h3>Все навыки сразу</h3>
+                <span>Выдаст полный список навыков SCUM по очереди. Обычно ставь уровень 4.</span>
+              </div>
+              <div class="wargm-skill-grid">
+                <label class="wargm-field small">
+                  <span>Уровень</span>
+                  <input id="wargmAllSkillLevel" type="number" min="0" max="4" value="4" />
+                </label>
+                <label class="wargm-field small">
+                  <span>Опыт</span>
+                  <input id="wargmAllSkillExperience" type="number" min="0" value="0" />
+                </label>
+              </div>
+            </div>
+
+            <div class="wargm-mode-block" data-wargm-mode="attributes">
+              <div class="quad wargm-attributes">
+                <label class="wargm-field"><span>Сила</span><input id="wargmStrength" type="number" placeholder="3" /></label>
+                <label class="wargm-field"><span>Тело</span><input id="wargmConstitution" type="number" placeholder="3" /></label>
+                <label class="wargm-field"><span>Ловкость</span><input id="wargmDexterity" type="number" placeholder="3" /></label>
+                <label class="wargm-field"><span>Интеллект</span><input id="wargmIntelligence" type="number" placeholder="3" /></label>
+              </div>
+            </div>
+
+            <div class="wargm-mode-block" data-wargm-mode="command">
+              <label class="wargm-field">
+                <span>Команда</span>
+                <textarea id="wargmCommand" spellcheck="false" placeholder="#Announce Покупка выдана {name}"></textarea>
+              </label>
+            </div>
+
+            <div class="wargm-preview" id="wargmPreview"></div>
+            <div class="button-row wargm-actions">
+              <button class="btn" id="wargmSync">Синхронизировать покупки</button>
+              <button class="btn" id="wargmConfirm">Подтвердить выданные</button>
+              <button class="btn primary" id="wargmDeliver">Выдать выбранное</button>
+            </div>
+          </section>
+          <section class="panel service-card service-card-discord" data-service-section="discord" hidden>
+            <h2>Discord Log</h2>
+            <p class="service-card-note">Можно отправлять события через webhook или через Discord-бота в выбранные каналы. Токен хранится отдельно в секретном файле.</p>
+            <div class="discord-control-grid">
+              <label>
+                <span>Куда отправить тест</span>
+                <select id="discordRoute">
+                  <option value="system">Система</option>
+                  <option value="presence">Входы/выходы</option>
+                  <option value="chat">Чат</option>
+                  <option value="combat">Бои</option>
+                </select>
+              </label>
+              <label>
+                <span>Bot token</span>
+                <input id="discordBotToken" type="password" autocomplete="off" placeholder="Вставь токен бота, если выбран режим Bot Channel">
+              </label>
+            </div>
+            <textarea id="discordMessage" spellcheck="false" placeholder="Тестовое сообщение Discord"></textarea>
+            <div class="button-row">
+              <button class="btn" id="discordStatus">Статус</button>
+              <button class="btn" id="discordSaveToken">Сохранить токен</button>
+              <button class="btn primary" id="discordTest">Отправить тест</button>
+            </div>
+          </section>
+          <section class="panel wide service-result-panel" data-service-result>
+            <h2>Результат</h2>
+            <pre class="result" id="serviceResult"></pre>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-console">
+        <div class="console-grid">
+          <section class="panel">
+            <h2>Команда</h2>
+            <textarea id="consoleCommand" spellcheck="false" placeholder="#ListPlayers"></textarea>
+            <button class="btn primary" id="runConsole">Выполнить</button>
+          </section>
+          <section class="panel">
+            <h2>Выдача предметов</h2>
+            <input id="itemTarget" placeholder="SteamID или имя" />
+            <input id="itemId" list="itemCatalog" placeholder="ID предмета, например CannedGoulash" />
+            <input id="itemQty" type="number" min="1" value="1" />
+            <div class="button-row">
+              <button class="btn" id="grantItem">Выдать</button>
+              <button class="btn" id="equipItem" hidden>В руки</button>
+              <button class="btn" id="prewarmItem">Проверить</button>
+              <button class="btn" id="addItemBatch">В список</button>
+              <button class="btn primary" id="grantItemBatch">Выдать список</button>
+            </div>
+            <div class="mini-list item-batch-list" id="itemBatchList"></div>
+          </section>
+          <section class="panel">
+            <h2>Игрок</h2>
+            <input id="actionTarget" placeholder="SteamID или имя" />
+            <div class="triple">
+              <input id="teleportX" type="number" placeholder="X" />
+              <input id="teleportY" type="number" placeholder="Y" />
+              <input id="teleportZ" type="number" placeholder="Z" />
+            </div>
+            <button class="btn" id="teleportPlayer">Телепорт</button>
+            <select id="moneyCurrency">
+              <option value="Normal">Обычные деньги</option>
+              <option value="Gold">Золото</option>
+            </select>
+            <input id="moneyAmount" type="number" placeholder="Сумма" />
+            <button class="btn" id="changeMoney">Баланс</button>
+          </section>
+          <section class="panel">
+            <h2>Транспорт</h2>
+            <input id="vehicleId" list="vehicleCatalog" placeholder="ID транспорта, например BPC_WolfsWagen" />
+            <input id="vehicleMinutes" type="number" min="0" max="1440" value="0" placeholder="Время жизни, мин (0 = без автоудаления)" />
+            <button class="btn" id="spawnVehicle">Создать</button>
+          </section>
+          <section class="panel wide">
+            <h2>Результат</h2>
+            <pre class="result" id="consoleResult"></pre>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-diagnostics">
+        <div class="diagnostic-strip">
+          <div class="diag-tile">
+            <span>Bridge</span>
+            <strong id="diagBridge">checking...</strong>
+          </div>
+          <div class="diag-tile">
+            <span>Heartbeat</span>
+            <strong id="diagHeartbeat">-</strong>
+          </div>
+          <div class="diag-tile">
+            <span>Queue</span>
+            <strong id="diagQueue">-</strong>
+          </div>
+          <div class="diag-tile">
+            <span>Current</span>
+            <strong id="diagCurrent">idle</strong>
+          </div>
+          <div class="diag-tile wide">
+            <span>Last delivery</span>
+            <strong id="diagLastDelivery">none</strong>
+          </div>
+        </div>
+        <div class="smoke-actions">
+          <button class="btn" id="smokeBridge">Проверить мост</button>
+          <button class="btn" id="smokeApple">Apple_2</button>
+          <button class="btn" id="smokeWeapon">Weapon_MK18</button>
+          <button class="btn" id="smokeVehicle">Транспорт</button>
+          <span class="muted-line">Цель берётся из поля SteamID/имени на вкладке сервисов.</span>
+        </div>
+        <div class="split">
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Очередь действий</h2>
+              <button class="icon-btn" title="Обновить" id="refreshQueueStatus">↻</button>
+            </div>
+            <pre class="log" id="queueStatus"></pre>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Trace команд</h2>
+              <button class="icon-btn" title="Обновить" id="refreshTrace">↻</button>
+            </div>
+            <pre class="log" id="traceLog"></pre>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Лог сервера</h2>
+              <button class="icon-btn" title="Обновить" id="refreshServerLog">↻</button>
+            </div>
+            <pre class="log" id="serverLog"></pre>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Runtime-мост</h2>
+              <button class="icon-btn" title="Обновить" id="refreshRuntimeLog">↻</button>
+            </div>
+            <pre class="log" id="runtimeLog"></pre>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Журнал действий</h2>
+              <button class="icon-btn" title="Обновить" id="refreshActionLog">↻</button>
+            </div>
+            <pre class="log" id="actionLog"></pre>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-downloads">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Файлы пакета</h2>
+            <button class="icon-btn" title="Обновить" id="refreshDownloads">↻</button>
+          </div>
+          <div class="downloads" id="downloadsList"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="diagnostic-support hidden" id="diagnosticSupport" aria-live="polite">
+    <div class="diagnostic-support-text">
+      <strong id="diagnosticSupportTitle">Обнаружена ошибка SCUM NeDjin</strong>
+      <span id="diagnosticSupportMessage">Скачайте диагностический пакет, откройте тикет в Discord и прикрепите файл вручную.</span>
+    </div>
+    <div class="diagnostic-support-actions">
+      <button class="btn diagnostic-support-btn diagnostic-support-download" id="downloadDiagnosticsPackage" type="button">Скачать логи</button>
+      <a class="btn diagnostic-support-btn diagnostic-support-link" id="openDiagnosticsDiscord" href="https://discord.gg/kQwBDdzxEH" target="_blank" rel="noopener noreferrer">Открыть тикет</a>
+    </div>
+  </div>
+  <div class="modal hidden" id="playerActionModal" aria-hidden="true">
+    <div class="modal-card" id="playerActionCard">
+      <div class="modal-head">
+        <div>
+          <small>Игрок</small>
+          <h2 id="playerActionTitle">Действия</h2>
+        </div>
+        <button class="icon-btn" id="playerActionClose" title="Закрыть">×</button>
+      </div>
+      <div class="modal-body">
+        <input id="playerActionTarget" placeholder="SteamID или имя" />
+        <div class="tabs action-tabs">
+          <button class="tab active" data-player-tab="message">Сообщение</button>
+          <button class="tab" data-player-tab="inventory">Инвентарь</button>
+          <button class="tab" data-player-tab="items">Предметы</button>
+          <button class="tab" data-player-tab="position">Позиция</button>
+          <button class="tab" data-player-tab="economy">Баланс</button>
+          <button class="tab" data-player-tab="character">Персонаж</button>
+          <button class="tab" data-player-tab="vehicle">Транспорт</button>
+          <button class="tab" data-player-tab="guard">Модерация</button>
+        </div>
+        <section class="action-pane active" data-player-pane="message">
+          <textarea id="playerActionMessage" placeholder="Сообщение игроку"></textarea>
+          <button class="btn primary" id="playerActionSendMessage">Отправить</button>
+        </section>
+        <section class="action-pane" data-player-pane="inventory">
+          <div class="button-row">
+            <button class="btn" id="playerInventoryRefresh">Обновить инвентарь</button>
+            <button class="btn" id="playerActionClearInventory">Очистить инвентарь</button>
+          </div>
+          <div class="inventory-inline-add" hidden data-feature-hidden="add-inventory-item">
+            <input id="playerInventoryAddItemId" list="itemCatalog" placeholder="ID предмета для инвентаря" />
+            <input id="playerInventoryAddItemQty" type="number" min="1" max="20" value="1" />
+            <button class="btn primary" id="playerInventoryAddItem">Положить в инвентарь</button>
+          </div>
+          <div id="playerInventoryBody" class="inventory-panel"></div>
+        </section>
+        <section class="action-pane" data-player-pane="items">
+          <input id="playerActionItemId" list="itemCatalog" placeholder="ID предмета" />
+          <input id="playerActionItemQty" type="number" min="1" value="1" />
+          <div class="button-row item-action-row">
+            <button class="btn primary" id="playerActionGrantItem">Выдать предмет</button>
+            <button class="btn" id="playerActionEquipItem">В руки</button>
+            <button class="btn" id="playerActionPrewarmItem">Проверить</button>
+          </div>
+          <div class="welcome-pack-strip" id="playerWelcomeStrip">
+            <div>
+              <b id="playerWelcomeStatus">Стартпак</b>
+              <span id="playerWelcomeHint">Проверка статуса идёт только при открытии игрока или обновлении.</span>
+            </div>
+            <div class="button-row compact welcome-pack-actions">
+              <button class="btn primary" id="playerActionWelcome">Выдать стартпак</button>
+              <button class="btn" id="playerActionWelcomeReset">Снять стартпак</button>
+            </div>
+          </div>
+          <div class="welcome-pack-strip battlepass-status-strip" id="playerBattlepassStrip">
+            <div>
+              <b id="playerBattlepassStatus">Battlepass</b>
+              <span id="playerBattlepassHint">Выдаётся автоматически после входа. Игрок может проверить статус командой /battlepass.</span>
+            </div>
+          </div>
+        </section>
+        <section class="action-pane" data-player-pane="position">
+          <div class="triple">
+            <input id="playerActionX" type="number" placeholder="X" />
+            <input id="playerActionY" type="number" placeholder="Y" />
+            <input id="playerActionZ" type="number" placeholder="Z" />
+          </div>
+          <input id="playerActionHomeLabel" placeholder="Название дома" />
+          <div class="button-row">
+            <button class="btn primary" id="playerActionTeleport">Телепорт</button>
+            <button class="btn" id="playerActionSetHome">Сохранить дом</button>
+          </div>
+        </section>
+        <section class="action-pane" data-player-pane="economy">
+          <div class="economy-check-card">
+            <div class="economy-check-head">
+              <div>
+                <b>Баланс игрока</b>
+                <span>Деньги, золото и слава обновляются по запросу, без постоянной нагрузки.</span>
+              </div>
+              <button class="btn" id="playerEconomyRefresh" type="button">Обновить данные</button>
+            </div>
+            <div id="playerEconomyFactsBody" class="player-economy-facts"></div>
+          </div>
+          <select id="playerActionCurrency">
+            <option value="Normal">Обычные деньги</option>
+            <option value="Gold">Золото</option>
+          </select>
+          <input id="playerActionAmount" type="number" placeholder="Сумма" />
+          <div class="button-row">
+            <button class="btn primary" id="playerActionMoney">Изменить баланс</button>
+            <button class="btn" id="playerActionFame">Начислить славу</button>
+          </div>
+        </section>
+        <section class="action-pane character-tools" data-player-pane="character">
+          <div class="character-block character-facts-block">
+            <div>
+              <h3>Текущие атрибуты</h3>
+              <p>Показывает атрибуты выбранного игрока. Данные читаются один раз при открытии вкладки, без постоянного мониторинга.</p>
+            </div>
+            <div class="button-row character-actions">
+              <button class="btn" id="playerCharacterFactsRefresh" type="button">Обновить данные персонажа</button>
+              <span class="muted-line">Если данные ещё не готовы, нажми обновить после полной загрузки игрока.</span>
+            </div>
+            <div id="playerCharacterFactsBody" class="player-character-facts"></div>
+          </div>
+
+          <div class="character-block">
+            <div>
+              <h3>Атрибуты</h3>
+              <p>Выставляет силу, телосложение, ловкость и интеллект выбранному игроку.</p>
+            </div>
+            <div class="quad labeled-grid">
+              <label><span>Сила</span><input id="playerActionStrength" type="number" value="8" /></label>
+              <label><span>Телосложение</span><input id="playerActionConstitution" type="number" value="8" /></label>
+              <label><span>Ловкость</span><input id="playerActionDexterity" type="number" value="8" /></label>
+              <label><span>Интеллект</span><input id="playerActionIntelligence" type="number" value="8" /></label>
+            </div>
+            <button class="btn primary" id="playerActionAttributes">Выдать атрибуты</button>
+          </div>
+
+          <div class="character-block">
+            <div>
+              <h3>Навыки</h3>
+              <p>Один навык или все актуальные SCUM-навыки. Для максимума укажи уровень 4.</p>
+            </div>
+            <div class="triple labeled-grid">
+              <label><span>Навык</span><input id="playerActionSkill" list="skillCatalog" placeholder="Например Handgun" /></label>
+              <label><span>Уровень</span><input id="playerActionSkillLevel" type="number" min="0" max="4" value="4" /></label>
+              <button class="btn" id="playerActionSkillApply">Выдать один навык</button>
+            </div>
+            <div class="button-row character-actions">
+              <button class="btn primary" id="playerActionAllSkills">Выдать все навыки</button>
+              <span class="muted-line">Навыки идут по очереди с небольшой паузой, чтобы не забивать сервер.</span>
+            </div>
+          </div>
+
+        </section>
+        <section class="action-pane" data-player-pane="vehicle">
+          <input id="playerActionVehicleId" list="vehicleCatalog" placeholder="ID транспорта" />
+          <div class="triple">
+            <input id="playerActionRentalMinutes" type="number" min="0" max="1440" value="10" placeholder="Минуты аренды / жизни" />
+            <input id="playerActionVehicleEntityId" placeholder="ID транспорта для удаления" />
+            <button class="btn" id="playerActionDestroyVehicle">Удалить транспорт</button>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" id="playerActionSpawnVehicle">Создать рядом</button>
+            <button class="btn" id="playerActionRentVehicle">Аренда</button>
+          </div>
+        </section>
+        <section class="action-pane" data-player-pane="guard">
+          <input id="playerActionReason" placeholder="Причина" />
+          <div class="button-row">
+            <button class="btn" id="playerActionKick">Кикнуть</button>
+            <button class="btn danger" id="playerActionBan">Забанить</button>
+          </div>
+        </section>
+        <pre class="result compact" id="playerActionResult"></pre>
+      </div>
+    </div>
+  </div>
+  <datalist id="itemCatalog"></datalist>
+  <datalist id="vehicleCatalog"></datalist>
+  <datalist id="skillCatalog"></datalist>
+  <datalist id="characterPackCatalog"></datalist>
+  <script src="/app.js?v=20260721_loot_help_editor_v2"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{
+  "Enabled": true,
+  "DefaultTier": "vip",
+  "DefaultDurationDays": 30,
+  "ExtendExisting": true,
+  "BasePermissions": [
+    "vip.active",
+    "welcome-pack.vip",
+    "sethome.vip",
+    "daily-pack.vip",
+    "battlepass.vip",
+    "sector-scan.vip",
+    "vehicle-rental.vip",
+    "base-loot.vip"
+  ],
+  "TierPermissions": {
+    "premium": [
+      "vip.premium"
+    ]
+  },
+  "Members": [],
+  "Features": {
+    "WelcomePack": {
+      "Enabled": true,
+      "Items": []
+    },
+    "DailyPack": {
+      "Enabled": true,
+      "CooldownHours": 12,
+      "Items": []
+    },
+    "Battlepass": {
+      "Enabled": true
+    },
+    "HomeSystem": {
+      "Enabled": true,
+      "MaxHomes": 5
+    },
+    "SectorScan": {
+      "Enabled": true,
+      "Free": true,
+      "CooldownSeconds": 30
+    },
+    "VehicleRental": {
+      "Enabled": true,
+      "DiscountPercent": 25,
+      "DefaultMinutes": 30,
+      "MaxMinutes": 180,
+      "SpawnCooldownSeconds": 60
+    }
+  },
+  "Wargm": {
+    "Enabled": true,
+    "DefaultDurationDays": 30,
+    "SuccessMessage": "VIP активирован."
+  }
+}

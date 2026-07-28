@@ -1,0 +1,23 @@
+name: DCO
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  signoff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify commit sign-off
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="$(git merge-base "origin/$GITHUB_BASE_REF" HEAD)"
+          while read -r commit; do
+            git show -s --format=%B "$commit" | grep -qi '^Signed-off-by: '
+          done < <(git rev-list "$base..HEAD")
