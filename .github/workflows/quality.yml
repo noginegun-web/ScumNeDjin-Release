@@ -25,7 +25,8 @@ jobs:
       - run: node --check ue4ss/ScumNeDjin/web/app.js
 
   native:
-    runs-on: windows-latest
+    # The native bridge requires the MSVC toolchain shipped on the 2022 image.
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
       - name: Configure native bridge
