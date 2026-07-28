@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace warden {
+namespace nedjin {
 
 bool SqliteQueryRowsJson(
     const std::wstring& baseDir,

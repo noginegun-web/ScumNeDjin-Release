@@ -10760,11 +10760,6 @@ els.quickBroadcast.addEventListener('click', async () => {
   await sleep(750);
   await refreshEvents().catch(toast);
 });
-els.quickCommandRun.addEventListener('click', async () => {
-  await showActionResult(els.quickResult, () => api('/api/rcon', { method: 'POST', body: JSON.stringify({ command: els.quickCommand.value }) }));
-  await sleep(750);
-  await refreshEvents().catch(toast);
-});
 els.welcomeClaim.addEventListener('click', async () => {
   await showActionResult(els.serviceResult, async () => {
     const result = await api('/api/welcome-pack/claim', { method: 'POST', body: JSON.stringify(serviceTargetBody()) });
@@ -10996,9 +10991,6 @@ els.economyApply.addEventListener('click', async () => {
 els.fameApply.addEventListener('click', async () => {
   const body = Object.assign(playerTargetBody(els.economyTarget.value.trim()), { amount: Number(els.fameAmount.value || 0) });
   await showActionResult(els.economyResult, () => api('/api/player/change-fame', { method: 'POST', body: JSON.stringify(body) }));
-});
-els.runConsole.addEventListener('click', async () => {
-  await showActionResult(els.consoleResult, () => api('/api/rcon', { method: 'POST', body: JSON.stringify({ command: els.consoleCommand.value }) }));
 });
 els.grantItem.addEventListener('click', async () => {
   const target = els.itemTarget.value.trim();

@@ -10,18 +10,13 @@ permissions:
   contents: read
 
 jobs:
-  managed-and-web:
+  web:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "8.0.x"
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - run: dotnet build ScumWarden.sln -c Release --nologo
-      - run: node --check src/ScumWarden.Server/wwwroot/app.js
       - run: node --check ue4ss/ScumNeDjin/web/app.js
 
   native:

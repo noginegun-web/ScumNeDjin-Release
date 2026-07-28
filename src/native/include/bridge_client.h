@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace warden {
+namespace nedjin {
 
 struct BridgeResult {
     bool ok{};

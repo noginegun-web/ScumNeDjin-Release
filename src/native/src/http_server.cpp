@@ -34,7 +34,7 @@
 
 namespace fs = std::filesystem;
 
-namespace warden {
+namespace nedjin {
 
 namespace {
 
@@ -11107,25 +11107,6 @@ std::string ApiResponse(const std::wstring& baseDir, const Request& req, const s
         if (req.method == "GET") return ServerConfigReadEnvelope(baseDir, req);
         return ServerConfigSaveEnvelope(baseDir, req);
     }
-    if (path == "/api/local-rcon/status" || path == "/api/server-command/status") {
-        return Envelope(true, LocalRconStatusJson(baseDir));
-    }
-    if (path == "/api/local-rcon" || path == "/api/server-command") {
-        auto command = RequestCommandText(req);
-        if (command.empty()) return Envelope(false, "Команда не задана.");
-        const auto result = LocalRconSendConsoleCommand(baseDir, command);
-        if (!result.ok) {
-            auto message = result.message.empty() ? result.body : result.message;
-            if (message.size() > 700) message = message.substr(0, 700);
-            return Envelope(false, std::string("Командный канал сервера не принял команду: ") + message);
-        }
-        return Envelope(true, std::string("{\"transport\":\"server-command\",\"command\":\"") +
-            JsonEscape(LocalRconCommandText(command)) +
-            "\",\"body\":" + JsonValueOrString(result.body) + "}");
-    }
-    if (path == "/api/ark-rcon") {
-        return ArkPanelAdminEnvelope(baseDir, req);
-    }
     if (path == "/api/servers") {
         const auto serverName = ServerDisplayName(baseDir);
         return Envelope(true, std::string("[{\"id\":\"local\",\"name\":\"") + JsonEscape(serverName) +
@@ -11542,27 +11523,6 @@ std::string ApiResponse(const std::wstring& baseDir, const Request& req, const s
     }
     if (path == "/api/gamestores/process") {
         return GameStoresProcessJson(baseDir);
-    }
-    if (path == "/api/rcon" || path == "/api/web-rcon" || path == "/api/command") {
-        if (LocalRconEnabled(baseDir)) {
-            auto command = RequestCommandText(req);
-            if (command.empty()) return Envelope(false, "Команда не задана.");
-            const auto result = LocalRconSendConsoleCommand(baseDir, command);
-            if (!result.ok) {
-                auto message = result.message.empty() ? result.body : result.message;
-                if (message.size() > 700) message = message.substr(0, 700);
-                return Envelope(false, std::string("Командный канал сервера не принял команду: ") + message);
-            }
-            return Envelope(true, std::string("{\"transport\":\"server-command\",\"command\":\"") +
-                JsonEscape(LocalRconCommandText(command)) +
-                "\",\"body\":" + JsonValueOrString(result.body) + "}");
-        }
-        if (ArkPanelEnabled(baseDir)) return ArkPanelAdminEnvelope(baseDir, req);
-        auto commandText = RequestCommandText(req);
-        if (commandText.empty()) return Envelope(false, "Команда не задана.");
-        auto br = BridgeExecute(baseDir, "admin_exec",
-            std::string("{\"commandText\":\"") + JsonEscape(commandText) + "\",\"waitForExecution\":true}", 30000);
-        return br.ok ? Envelope(true, br.body) : EnvelopeFailureWithJsonData(br.message, br.body);
     }
     if (path == "/api/admin-command-probe" || path == "/api/debug/admin-command-probe") {
         return Envelope(false, "admin-command-probe отключён в публичной сборке: live-probe admin-команд уже приводил к UE4SS crash. Используйте статические дампы/документацию.");

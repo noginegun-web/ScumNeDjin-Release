@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(ScumWardenNative LANGUAGES CXX)
+project(ScumNeDjinNative LANGUAGES CXX)
 
 option(SCUM_NEDJIN_PUBLIC_REQUIRE_CONFIGURED_API_KEY "Fail closed until a public host package has a unique local API key" ON)
 option(SCUM_NEDJIN_BUILD_TESTS "Build isolated native configuration I/O safety tests" OFF)

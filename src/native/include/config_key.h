@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace warden {
+namespace nedjin {
 
 // Produces a file-system-safe config/state key without accepting path syntax.
 std::string SafeConfigKey(std::string value);

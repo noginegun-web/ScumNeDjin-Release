@@ -46,11 +46,24 @@ Get-ChildItem -LiteralPath $resolvedRoot -File -Recurse -Force | ForEach-Object 
     }
 }
 
-$panelJs = Join-Path $resolvedRoot 'src/ScumWarden.Server/wwwroot/app.js'
 $bridgeWebJs = Join-Path $resolvedRoot 'ue4ss/ScumNeDjin/web/app.js'
-if ((Test-Path -LiteralPath $panelJs -PathType Leaf) -and (Test-Path -LiteralPath $bridgeWebJs -PathType Leaf)) {
-    if ((Get-FileHash -LiteralPath $panelJs -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $bridgeWebJs -Algorithm SHA256).Hash) {
-        $violations.Add('panel JavaScript copies differ')
+if (-not (Test-Path -LiteralPath $bridgeWebJs -PathType Leaf)) {
+    $violations.Add('missing native web panel JavaScript')
+}
+
+$managedProjectFiles = @(Get-ChildItem -LiteralPath $resolvedRoot -Filter '*.csproj' -File -Recurse -Force)
+if ($managedProjectFiles.Count -gt 0) {
+    $managedProjectFiles | ForEach-Object {
+        $relative = $_.FullName.Substring($resolvedRoot.Length).TrimStart('\', '/')
+        $violations.Add("managed project is outside the public runtime boundary: $relative")
+    }
+}
+
+$solutionFiles = @(Get-ChildItem -LiteralPath $resolvedRoot -Filter '*.sln' -File -Recurse -Force)
+if ($solutionFiles.Count -gt 0) {
+    $solutionFiles | ForEach-Object {
+        $relative = $_.FullName.Substring($resolvedRoot.Length).TrimStart('\', '/')
+        $violations.Add("solution file is outside the public runtime boundary: $relative")
     }
 }
 
@@ -83,6 +96,16 @@ if ((Test-Path -LiteralPath $bridgeSafetyPath -PathType Leaf) -and (Test-Path -L
     foreach ($blockedMarker in @('FindAllOf("Item")', 'FindAllOf("Controller")')) {
         if ($bridgeSource.Contains($blockedMarker)) {
             $violations.Add("blocked live object scan marker: $blockedMarker")
+        }
+    }
+}
+
+$nativeHttpPath = Join-Path $resolvedRoot 'src/native/src/http_server.cpp'
+if (Test-Path -LiteralPath $nativeHttpPath -PathType Leaf) {
+    $nativeHttpSource = Get-Content -LiteralPath $nativeHttpPath -Raw
+    foreach ($rawRoute in @('/api/rcon', '/api/web-rcon', '/api/command', '/api/local-rcon', '/api/server-command', '/api/ark-rcon')) {
+        if ($nativeHttpSource.Contains('"' + $rawRoute + '"')) {
+            $violations.Add("public raw command route is present: $rawRoute")
         }
     }
 }

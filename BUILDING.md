@@ -2,13 +2,12 @@
 
 Требования:
 
-- .NET SDK 8;
 - CMake 3.24+;
 - MSVC Build Tools с x64 C++ toolchain;
 - Node.js для синтаксической проверки панели.
 
-Все временные каталоги можно направить на рабочий диск через `TEMP`, `TMP`,
-`DOTNET_CLI_HOME` и `NUGET_PACKAGES`. Не добавляйте в Git рабочие конфиги,
+Все временные каталоги можно направить на рабочий диск через `TEMP` и `TMP`.
+Не добавляйте в Git рабочие конфиги,
 журналы, базы данных или материалы, права на распространение которых не
 подтверждены.
 
@@ -23,11 +22,9 @@ cmake --build build/native --config Release
 ctest --test-dir build/native -C Release --output-on-failure
 ```
 
-Панель:
+Веб-панель:
 
 ```powershell
-dotnet build ScumWarden.sln -c Release
-node --check src/ScumWarden.Server/wwwroot/app.js
 node --check ue4ss/ScumNeDjin/web/app.js
 ```
 

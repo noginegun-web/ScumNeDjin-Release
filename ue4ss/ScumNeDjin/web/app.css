@@ -993,7 +993,7 @@ body > .scheduler-job-modal :is(.mini-action.danger, .btn.danger) {
   word-break: keep-all !important;
 }
 
-/* 20260620 RCON audit final override: destructive actions use text, never 42px icon slots. */
+/* Safety audit final override: destructive actions use text, never 42px icon slots. */
 #page-modules :is(
   .mini-action.danger,
   .btn.danger,
