@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.24)
-project(ScumWardenNative LANGUAGES CXX)
+project(ScumNeDjinNative LANGUAGES CXX)
 
 option(SCUM_NEDJIN_PUBLIC_REQUIRE_CONFIGURED_API_KEY "Fail closed until a public host package has a unique local API key" ON)
+option(SCUM_NEDJIN_BUILD_TESTS "Build isolated native configuration I/O safety tests" OFF)
 
 add_library(version SHARED
     src/dllmain.cpp
@@ -29,3 +30,17 @@ set_target_properties(version PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out"
 )
+
+if(SCUM_NEDJIN_BUILD_TESTS)
+    enable_testing()
+
+    add_executable(config_io_tests
+        tests/config_io_tests.cpp
+        src/path_utils.cpp
+    )
+    target_compile_features(config_io_tests PRIVATE cxx_std_20)
+    target_compile_definitions(config_io_tests PRIVATE WIN32_LEAN_AND_MEAN NOMINMAX UNICODE _UNICODE)
+    target_include_directories(config_io_tests PRIVATE include)
+    target_link_libraries(config_io_tests PRIVATE bcrypt)
+    add_test(NAME config_io_tests COMMAND config_io_tests)
+endif()

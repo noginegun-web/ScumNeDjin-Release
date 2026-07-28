@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace warden {
+namespace nedjin {
 
 std::wstring ModuleDirectory();
 std::wstring JoinPath(const std::wstring& left, const std::wstring& right);

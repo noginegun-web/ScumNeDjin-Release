@@ -10,18 +10,13 @@ permissions:
   contents: read
 
 jobs:
-  managed-and-web:
+  web:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "8.0.x"
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - run: dotnet build ScumWarden.sln -c Release --nologo
-      - run: node --check src/ScumWarden.Server/wwwroot/app.js
       - run: node --check ue4ss/ScumNeDjin/web/app.js
 
   native:
@@ -33,6 +28,8 @@ jobs:
         shell: pwsh
         run: ./scripts/Test-PublicTree.ps1
       - name: Configure native bridge
-        run: cmake -S src/native -B build/native -G "Visual Studio 17 2022" -A x64 -DSCUM_NEDJIN_PUBLIC_REQUIRE_CONFIGURED_API_KEY=ON
+        run: cmake -S src/native -B build/native -G "Visual Studio 17 2022" -A x64 -DSCUM_NEDJIN_PUBLIC_REQUIRE_CONFIGURED_API_KEY=ON -DSCUM_NEDJIN_BUILD_TESTS=ON
       - name: Build native bridge
         run: cmake --build build/native --config Release
+      - name: Run native safety tests
+        run: ctest --test-dir build/native -C Release --output-on-failure

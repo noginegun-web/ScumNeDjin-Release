@@ -1,6 +1,6 @@
 #pragma once
 
-namespace warden {
+namespace nedjin {
 
 void* RealVersionModule();
 void LoadRealVersion();

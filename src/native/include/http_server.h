@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace warden {
+namespace nedjin {
 
 void StartHttpServer(const std::wstring& baseDir);
 

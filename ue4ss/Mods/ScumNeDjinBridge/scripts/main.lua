@@ -418,8 +418,6 @@ touchHeartbeat = function(force)
   lastHeartbeatTouch = now
   writeAll(HEARTBEAT_FILE, '{"utc":' .. js(nowUtc()) .. ',"bridge":"ScumNeDjinBridge"}')
 end
-
-
 function bridgeIniSettingValue(text, key)
   local wanted = tostring(key or ""):lower()
   for line in tostring(text or ""):gmatch("[^\r\n]+") do
@@ -638,7 +636,7 @@ end
 DEFAULT_LANGUAGE = "ru"
 SUPPORTED_LANGUAGES = { ru = true, en = true }
 -- Retains p5-loot-nearby-status-1 behavior; P6 only hardens the parser helper.
-BRIDGE_VERSION = "scum-nedjin-community-bridge-1.0.0"
+BRIDGE_VERSION = "scum-nedjin-bridge-v20260728-post-join-cache-seed-1"
 LANGUAGE_STATE_FILE = STATE_DIR .. "\\player-languages.json"
 PERMISSION_STATE_FILE = STATE_DIR .. "\\permissions.json"
 DEFAULT_LANGUAGE_FILES = {
@@ -1566,6 +1564,31 @@ function listPlayerInfosUnchecked(reason)
   end
 
   return filterPlayerInfosByPresence(infos)
+end
+
+-- P8: a deliberately narrow cache seed for automatic modules.  Unlike
+-- listPlayerInfosUnchecked this function never falls back to FindAllOf: it
+-- reads only GameState.PlayerArray and is called only from deferGameStrict.
+-- Keep it separate so a future config change cannot silently re-enable a
+-- global controller scan on the automatic post-join path.
+function refreshPlayerInfoCacheFromGameStatePlayerArrayOnly(reason)
+  local infos = {}
+  local seen = {}
+  local gs = gameStateRoot()
+  local playerArray = firstProp(gs, {"PlayerArray"})
+  if playerArray ~= nil then
+    local ok, num = pcall(function() return playerArray:GetArrayNum() end)
+    if ok and tonumber(num) ~= nil then
+      for i = 1, tonumber(num) do
+        local ps = nil
+        pcall(function() ps = playerArray[i] end)
+        if ps ~= nil and isValidObject(ps) then
+          addPlayerInfo(infos, seen, controllerInfo(ownerController(ps), ps, reason or "post-join-cache-seed"))
+        end
+      end
+    end
+  end
+  return replacePlayerInfoCache(filterPlayerInfosByPresence(infos))
 end
 
 function listPlayerInfos()
@@ -32806,6 +32829,115 @@ if configBool("bridge-safety", { "EnableJoinWarmupRuntimeScan", "enableJoinWarmu
   end)
 else
   appendLog("loop join-warmup-player-cache disabled by bridge-safety")
+end
+
+-- P8 deliberately does not restore the old join-warmup scan.  That path could
+-- reflect PlayerArray repeatedly every 1.5 seconds and, through the unchecked
+-- helper, could eventually fall back to a controller FindAllOf scan.  Instead
+-- we observe the already-written SCUM.log and schedule one strict
+-- game-thread PlayerArray reads for a settled join.  A later join supersedes
+-- the earlier one, coalescing a burst of logins into one cache seed.
+POST_JOIN_CACHE_SEED_PENDING_EPOCH = POST_JOIN_CACHE_SEED_PENDING_EPOCH or 0
+POST_JOIN_CACHE_SEED_LAST_HANDLED_EPOCH = POST_JOIN_CACHE_SEED_LAST_HANDLED_EPOCH or 0
+POST_JOIN_CACHE_SEED_NEXT_AT = POST_JOIN_CACHE_SEED_NEXT_AT or 0
+POST_JOIN_CACHE_SEED_ATTEMPTS = POST_JOIN_CACHE_SEED_ATTEMPTS or 0
+
+if configBool("bridge-safety", { "EnablePostJoinPlayerCacheSeed", "enablePostJoinPlayerCacheSeed" }, false) then
+  POST_JOIN_CACHE_SEED_INTERVAL_MS = math.max(1000, configNumber("bridge-safety", { "PostJoinPlayerCacheSeedIntervalMs", "postJoinPlayerCacheSeedIntervalMs" }, 2000))
+  POST_JOIN_CACHE_SEED_DELAY_SECONDS = math.max(
+    configNumber("bridge-safety", { "RuntimeScanJoinSettleSeconds", "runtimeScanJoinSettleSeconds" }, 12) + 3,
+    configNumber("bridge-safety", { "PostJoinPlayerCacheSeedDelaySeconds", "postJoinPlayerCacheSeedDelaySeconds" }, 20))
+  POST_JOIN_CACHE_SEED_RETRY_SECONDS = math.max(5, configNumber("bridge-safety", { "PostJoinPlayerCacheSeedRetrySeconds", "postJoinPlayerCacheSeedRetrySeconds" }, 15))
+  POST_JOIN_CACHE_SEED_MAX_ATTEMPTS = 1
+  POST_JOIN_CACHE_SEED_MAX_AGE_SECONDS = math.max(POST_JOIN_CACHE_SEED_DELAY_SECONDS, configNumber("bridge-safety", { "PostJoinPlayerCacheSeedMaxAgeSeconds", "postJoinPlayerCacheSeedMaxAgeSeconds" }, 180))
+
+  appendLog("loop post-join-player-cache-seed enabled intervalMs=" .. tostring(POST_JOIN_CACHE_SEED_INTERVAL_MS) ..
+    " delaySeconds=" .. tostring(POST_JOIN_CACHE_SEED_DELAY_SECONDS) ..
+    " maxAttempts=" .. tostring(POST_JOIN_CACHE_SEED_MAX_ATTEMPTS) ..
+    " route=GameState.PlayerArray-only")
+
+  safeLoop("post-join-player-cache-seed", POST_JOIN_CACHE_SEED_INTERVAL_MS, function()
+    -- This loop only reads SCUM.log/cache metadata.  The sole UE-object access
+    -- is below and is dispatched by deferGameStrict.
+    local joinEpoch = tonumber(latestServerLogJoinEpoch() or 0) or 0
+    if joinEpoch <= 0 or joinEpoch == (POST_JOIN_CACHE_SEED_LAST_HANDLED_EPOCH or 0) then return end
+
+    local now = os.time()
+    if joinEpoch ~= (POST_JOIN_CACHE_SEED_PENDING_EPOCH or 0) then
+      POST_JOIN_CACHE_SEED_PENDING_EPOCH = joinEpoch
+      POST_JOIN_CACHE_SEED_ATTEMPTS = 0
+      POST_JOIN_CACHE_SEED_NEXT_AT = now + POST_JOIN_CACHE_SEED_DELAY_SECONDS
+      appendLog("post-join player cache seed scheduled joinEpoch=" .. tostring(joinEpoch) ..
+        " delaySeconds=" .. tostring(POST_JOIN_CACHE_SEED_DELAY_SECONDS))
+      return
+    end
+
+    local age = now - joinEpoch
+    if age < 0 or age > POST_JOIN_CACHE_SEED_MAX_AGE_SECONDS then
+      POST_JOIN_CACHE_SEED_LAST_HANDLED_EPOCH = joinEpoch
+      POST_JOIN_CACHE_SEED_PENDING_EPOCH = 0
+      appendLog("post-join player cache seed skipped stale join age=" .. tostring(age))
+      return
+    end
+    if age < POST_JOIN_CACHE_SEED_DELAY_SECONDS or now < (POST_JOIN_CACHE_SEED_NEXT_AT or 0) then return end
+    if PLAYER_INFO_REFRESH_PENDING then return end
+
+    local snapshot = serverLogOnlineSnapshot()
+    if snapshot ~= nil and tonumber(snapshot.playerCount or -1) == 0 and snapshot.laterJoin ~= true then
+      POST_JOIN_CACHE_SEED_LAST_HANDLED_EPOCH = joinEpoch
+      POST_JOIN_CACHE_SEED_PENDING_EPOCH = 0
+      appendLog("post-join player cache seed skipped: server log reports no players")
+      return
+    end
+
+    local attempt = (tonumber(POST_JOIN_CACHE_SEED_ATTEMPTS or 0) or 0) + 1
+    POST_JOIN_CACHE_SEED_ATTEMPTS = attempt
+    PLAYER_INFO_REFRESH_PENDING = true
+    deferGameStrict(1, function()
+      if joinEpoch ~= (POST_JOIN_CACHE_SEED_PENDING_EPOCH or 0) then
+        PLAYER_INFO_REFRESH_PENDING = false
+        appendLog("post-join player cache seed skipped: superseded by a newer join")
+        return
+      end
+
+      local okRefresh, countOrErr = pcall(function()
+        return refreshPlayerInfoCacheFromGameStatePlayerArrayOnly("post-join-cache-seed")
+      end)
+      PLAYER_INFO_REFRESH_PENDING = false
+      local count = tonumber(countOrErr) or 0
+      if okRefresh and count > 0 then
+        POST_JOIN_CACHE_SEED_LAST_HANDLED_EPOCH = joinEpoch
+        POST_JOIN_CACHE_SEED_PENDING_EPOCH = 0
+        appendLog("post-join player cache seed complete players=" .. tostring(count) ..
+          " attempt=" .. tostring(attempt) .. " route=GameState.PlayerArray-only")
+      elseif attempt >= POST_JOIN_CACHE_SEED_MAX_ATTEMPTS then
+        POST_JOIN_CACHE_SEED_LAST_HANDLED_EPOCH = joinEpoch
+        POST_JOIN_CACHE_SEED_PENDING_EPOCH = 0
+        appendLog("post-join player cache seed exhausted attempt=" .. tostring(attempt) ..
+          " result=" .. tostring(okRefresh and "empty" or countOrErr))
+      else
+        POST_JOIN_CACHE_SEED_NEXT_AT = os.time() + POST_JOIN_CACHE_SEED_RETRY_SECONDS
+        appendLog("post-join player cache seed retry players=" .. tostring(count) ..
+          " attempt=" .. tostring(attempt) .. " retrySeconds=" .. tostring(POST_JOIN_CACHE_SEED_RETRY_SECONDS))
+      end
+    end, "post-join player cache seed", function(reason)
+      PLAYER_INFO_REFRESH_PENDING = false
+      if joinEpoch ~= (POST_JOIN_CACHE_SEED_PENDING_EPOCH or 0) then return end
+      if attempt >= POST_JOIN_CACHE_SEED_MAX_ATTEMPTS then
+        POST_JOIN_CACHE_SEED_LAST_HANDLED_EPOCH = joinEpoch
+        POST_JOIN_CACHE_SEED_PENDING_EPOCH = 0
+        appendLog("post-join player cache seed exhausted before dispatch attempt=" .. tostring(attempt) ..
+          " reason=" .. tostring(reason or ""))
+      else
+        POST_JOIN_CACHE_SEED_NEXT_AT = os.time() + POST_JOIN_CACHE_SEED_RETRY_SECONDS
+        appendLog("post-join player cache seed dispatch deferred attempt=" .. tostring(attempt) ..
+          " retrySeconds=" .. tostring(POST_JOIN_CACHE_SEED_RETRY_SECONDS) ..
+          " reason=" .. tostring(reason or ""))
+      end
+    end)
+  end)
+else
+  appendLog("loop post-join-player-cache-seed disabled by bridge-safety")
 end
 
 if configBool("bridge-safety", { "EnableRentalCleanupLoop", "enableRentalCleanupLoop" }, true) then

@@ -28,7 +28,7 @@ extern "C" __declspec(dllimport) UINT WINAPI GetSystemDirectoryW(LPWSTR lpBuffer
 extern "C" __declspec(dllimport) HMODULE WINAPI LoadLibraryW(LPCWSTR lpLibFileName);
 extern "C" __declspec(dllimport) FARPROC WINAPI GetProcAddress(HMODULE hModule, LPCSTR lpProcName);
 
-namespace warden {
+namespace nedjin {
 
 namespace {
 HMODULE g_realVersion{};
@@ -54,7 +54,7 @@ void* RealVersionModule() {
 
 template <typename Fn>
 static Fn RealProc(const char* name) {
-    auto mod = static_cast<HMODULE>(warden::RealVersionModule());
+    auto mod = static_cast<HMODULE>(nedjin::RealVersionModule());
     return mod ? reinterpret_cast<Fn>(GetProcAddress(mod, name)) : nullptr;
 }
 

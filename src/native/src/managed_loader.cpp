@@ -46,7 +46,7 @@ std::string TrimAscii(std::string value) {
 }
 
 std::string ConfigValue(const std::wstring& baseDir, const std::string& key, const std::string& fallback) {
-    const auto config = warden::ReadTextFile(warden::JoinPath(warden::JoinPath(baseDir, L"ScumNeDjin"), L"nedjin.ini"));
+    const auto config = nedjin::ReadTextFile(nedjin::JoinPath(nedjin::JoinPath(baseDir, L"ScumNeDjin"), L"nedjin.ini"));
     const auto needle = key + "=";
     auto pos = config.find(needle);
     if (pos == std::string::npos) return fallback;
@@ -72,11 +72,11 @@ bool IsAbsolutePath(const std::wstring& path) {
 }
 
 std::wstring ResolveConfiguredPath(const std::wstring& baseDir, const std::string& value, const std::wstring& fallbackRelative) {
-    auto configured = warden::Utf8ToWide(value);
+    auto configured = nedjin::Utf8ToWide(value);
     if (configured.empty()) {
         configured = fallbackRelative;
     }
-    return IsAbsolutePath(configured) ? configured : warden::JoinPath(baseDir, configured);
+    return IsAbsolutePath(configured) ? configured : nedjin::JoinPath(baseDir, configured);
 }
 
 std::wstring RuntimeRoot(const std::wstring& baseDir) {
@@ -84,26 +84,26 @@ std::wstring RuntimeRoot(const std::wstring& baseDir) {
 }
 
 std::wstring StatusPath(const std::wstring& baseDir) {
-    return warden::JoinPath(warden::JoinPath(RuntimeRoot(baseDir), L"state"), L"managed-loader-status.json");
+    return nedjin::JoinPath(nedjin::JoinPath(RuntimeRoot(baseDir), L"state"), L"managed-loader-status.json");
 }
 
 std::wstring BridgeStatusPath(const std::wstring& baseDir) {
-    return warden::JoinPath(warden::JoinPath(baseDir, L"nedjin_bridge"), L"managed_loader.json");
+    return nedjin::JoinPath(nedjin::JoinPath(baseDir, L"nedjin_bridge"), L"managed_loader.json");
 }
 
 void WriteStatus(const std::wstring& baseDir, const std::string& status, const std::string& message, const std::string& extraJson = "") {
     std::ostringstream ss;
-    ss << "{\"utc\":\"" << warden::UtcIsoNow()
+    ss << "{\"utc\":\"" << nedjin::UtcIsoNow()
        << "\",\"enabled\":" << (ConfigBool(baseDir, "managed_loader_enabled", false) ? "true" : "false")
-       << ",\"status\":\"" << warden::JsonEscape(status)
-       << "\",\"message\":\"" << warden::JsonEscape(message) << "\"";
+       << ",\"status\":\"" << nedjin::JsonEscape(status)
+       << "\",\"message\":\"" << nedjin::JsonEscape(message) << "\"";
     if (!extraJson.empty()) {
         ss << "," << extraJson;
     }
     ss << "}";
     const auto json = ss.str();
-    warden::WriteTextFile(StatusPath(baseDir), json);
-    warden::WriteTextFile(BridgeStatusPath(baseDir), json);
+    nedjin::WriteTextFile(StatusPath(baseDir), json);
+    nedjin::WriteTextFile(BridgeStatusPath(baseDir), json);
 }
 
 bool TryGetProc(HMODULE module, const char* name, FARPROC& proc, std::string& error) {
@@ -137,7 +137,7 @@ std::wstring FindLatestHostFxr() {
     });
 
     const auto candidate = versions.back() / L"hostfxr.dll";
-    return warden::FileExists(candidate.wstring()) ? candidate.wstring() : L"";
+    return nedjin::FileExists(candidate.wstring()) ? candidate.wstring() : L"";
 }
 
 std::wstring HostFxrPath(const std::wstring& baseDir) {
@@ -155,7 +155,7 @@ DWORD WINAPI ManagedLoaderProbeThread(LPVOID param) {
     }
 
     try {
-        warden::RunManagedLoaderProbe(*baseDir);
+        nedjin::RunManagedLoaderProbe(*baseDir);
     }
     catch (...) {
         WriteStatus(*baseDir, "error", "managed loader probe threw an unhandled native exception",
@@ -167,7 +167,7 @@ DWORD WINAPI ManagedLoaderProbeThread(LPVOID param) {
 
 }
 
-namespace warden {
+namespace nedjin {
 
 void RunManagedLoaderProbeAsync(const std::wstring& baseDir) {
     std::wstring* threadBaseDir = nullptr;

@@ -12,7 +12,7 @@
 
 namespace fs = std::filesystem;
 
-namespace warden {
+namespace nedjin {
 namespace {
 
 struct sqlite3;
@@ -231,4 +231,4 @@ bool SqliteQueryRowsJson(
     return true;
 }
 
-} // namespace warden
+} // namespace nedjin

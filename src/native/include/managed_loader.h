@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace warden {
+namespace nedjin {
 
 void RunManagedLoaderProbe(const std::wstring& baseDir);
 void RunManagedLoaderProbeAsync(const std::wstring& baseDir);

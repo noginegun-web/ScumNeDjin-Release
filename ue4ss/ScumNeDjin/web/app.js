@@ -1739,54 +1739,8 @@ const configLabels = {
   CooldownTimeSeconds: 'Кулдаун, сек',
   EnableLogging: 'Вести лог',
   EnableHistory: 'Хранить историю',
-  BaseUrl: 'NVIDIA/OpenAI endpoint',
-  Model: 'Модель',
-  ApiKeyEnv: 'Env переменная ключа',
-  ApiKeyDotEnvPath: 'Локальный .env файл',
-  MinDelaySeconds: 'Мин. задержка, сек',
-  MaxDelaySeconds: 'Макс. задержка, сек',
-  StartupSilenceSeconds: 'Пауза после старта, сек',
-  HttpTimeoutSeconds: 'HTTP timeout, сек',
-  ChatChannel: 'Канал ответа',
-  QuestionOnly: 'Только вопросы/помощь',
-  IgnoreCommands: 'Игнорировать команды',
-  SuppressIfAnyHumanReply: 'Молчать, если ответили',
-  RequireSameChannelToCancel: 'Отмена только в том же канале',
-  AnswerWhenMentioned: 'Отвечать при упоминании ника',
-  GlobalCooldownSeconds: 'Общий кулдаун, сек',
-  UsePerPlayerCooldown: 'Кулдаун игрока включён',
-  PerPlayerCooldownSeconds: 'Кулдаун игрока, сек',
-  MinRepliesPerQuestion: 'Мин. ответов на вопрос',
-  MaxRepliesPerQuestion: 'Макс. ответов на вопрос',
-  ConversationStickinessSeconds: 'Память диалога, сек',
-  PersonaMemoryMessages: 'Память ника, сообщений',
-  MemoryMaxChars: 'Память: символов в строке',
-  AmbientChatEnabled: 'Живой чат между никами',
-  AmbientTopic: 'Тема живого чата',
-  AmbientParticipantCount: 'Участников живого чата',
-  AmbientMaxMessages: 'Сообщений в цепочке',
-  AmbientMinIntervalSeconds: 'Мин. интервал живого чата',
-  AmbientMaxIntervalSeconds: 'Макс. интервал живого чата',
-  AmbientMinReplyDelaySeconds: 'Мин. задержка реплики',
-  AmbientMaxReplyDelaySeconds: 'Макс. задержка реплики',
-  AmbientQuietSecondsAfterHuman: 'Пауза после живого игрока',
-  MaxPending: 'Макс. ожидающих вопросов',
-  ReadLimit: 'Лимит чтения чата',
-  ContextMessages: 'Сообщений контекста',
-  MinMessageChars: 'Мин. символов',
-  Temperature: 'Температура',
-  TopP: 'Top-p',
-  MaxTokens: 'Макс. токенов',
-  MaxResponseChars: 'Макс. символов в чат',
-  EnableThinking: 'Thinking NVIDIA',
-  ReasoningEffort: 'Reasoning effort',
-  ServerKnowledge: 'Памятка сервера',
-  Channels: 'Слушать каналы',
-  IgnoredPrefixes: 'Игнорируемые префиксы',
-  TriggerWords: 'Триггеры вопросов',
-  BlockedWords: 'Запрещённые слова',
-  PersonaLines: 'Ники и характеры',
-  Personas: 'Ники и стили'
+  BaseUrl: 'Базовый URL',
+  Model: 'Модель'
 };
 
 const selectLabels = {
@@ -10806,11 +10760,6 @@ els.quickBroadcast.addEventListener('click', async () => {
   await sleep(750);
   await refreshEvents().catch(toast);
 });
-els.quickCommandRun.addEventListener('click', async () => {
-  await showActionResult(els.quickResult, () => api('/api/rcon', { method: 'POST', body: JSON.stringify({ command: els.quickCommand.value }) }));
-  await sleep(750);
-  await refreshEvents().catch(toast);
-});
 els.welcomeClaim.addEventListener('click', async () => {
   await showActionResult(els.serviceResult, async () => {
     const result = await api('/api/welcome-pack/claim', { method: 'POST', body: JSON.stringify(serviceTargetBody()) });
@@ -11042,9 +10991,6 @@ els.economyApply.addEventListener('click', async () => {
 els.fameApply.addEventListener('click', async () => {
   const body = Object.assign(playerTargetBody(els.economyTarget.value.trim()), { amount: Number(els.fameAmount.value || 0) });
   await showActionResult(els.economyResult, () => api('/api/player/change-fame', { method: 'POST', body: JSON.stringify(body) }));
-});
-els.runConsole.addEventListener('click', async () => {
-  await showActionResult(els.consoleResult, () => api('/api/rcon', { method: 'POST', body: JSON.stringify({ command: els.consoleCommand.value }) }));
 });
 els.grantItem.addEventListener('click', async () => {
   const target = els.itemTarget.value.trim();
